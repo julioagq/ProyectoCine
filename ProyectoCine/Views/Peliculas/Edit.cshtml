@@ -1,0 +1,137 @@
+@model ProyectoCine.Models.Pelicula // El modelo que se recibe es una Película
+
+@{
+    ViewData["Title"] = "Editar Película"; // Título de la página
+}
+
+<div class="row justify-content-center">
+    <div class="col-md-6">
+        <div class="card shadow-sm mt-3">
+            <!-- Encabezado visual -->
+            <div class="card-header bg-warning text-dark">
+                <h4 class="mb-0">Editar Película</h4>
+            </div>
+            <div class="card-body">
+                <!-- Formulario para editar una película -->
+                <form asp-action="Edit" asp-controller="Peliculas" method="post">
+                    @Html.AntiForgeryToken() <!-- Token de seguridad contra ataques CSRF -->
+                    <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+                    <input type="hidden" asp-for="Id" /> <!-- Campo oculto con el Id -->
+
+                    <!-- Campo Título -->
+                    <div class="mb-3">
+                        <label asp-for="Titulo" class="form-label fw-bold"></label>
+                        <input id="txtTitulo" asp-for="Titulo" class="form-control" />
+                        <span asp-validation-for="Titulo" class="text-danger"></span>
+                    </div>
+
+                    <!-- Campo Género -->
+                    <div class="mb-3">
+                        <label asp-for="Genero" class="form-label fw-bold"></label>
+                        <input id="txtGenero" asp-for="Genero" class="form-control" />
+                        <span asp-validation-for="Genero" class="text-danger"></span>
+                    </div>
+
+                    <!-- Campo Duración en minutos -->
+                    <div class="mb-3">
+                        <label asp-for="DuracionMinutos" class="form-label fw-bold"></label>
+                        <input asp-for="DuracionMinutos" class="form-control" type="number" />
+                        <span asp-validation-for="DuracionMinutos" class="text-danger"></span>
+                    </div>
+
+                    <!-- Campo Clasificación -->
+                    <div class="mb-3">
+                        <label asp-for="Clasificacion" class="form-label fw-bold"></label>
+                        <select asp-for="Clasificacion" class="form-select">
+                            <option value="">-- Seleccionar Clasificación --</option>
+                            <option value="TE">TE (Todo Público)</option>
+                            <option value="+12">+12 (Mayores de 12)</option>
+                            <option value="+15">+15 (Mayores de 15)</option>
+                            <option value="+18">+18 (Mayores de 18)</option>
+                        </select>
+                        <span asp-validation-for="Clasificacion" class="text-danger"></span>
+                    </div>
+
+                    <!-- Campo Cine asignado -->
+                    <div class="mb-3">
+                        <label asp-for="CineId" class="form-label fw-bold">Cine Asignado</label>
+                        <select asp-for="CineId" class="form-select" asp-items="ViewBag.CineId">
+                            <option value="">-- Seleccionar Cine --</option>
+                        </select>
+                        <span asp-validation-for="CineId" class="text-danger"></span>
+                    </div>
+
+                    <!-- Campo Sinopsis con opción de generar con IA -->
+                    <div class="mb-3">
+                        <label asp-for="Sinopsis" class="form-label fw-bold"></label>
+                        <div class="input-group mb-2">
+                            <textarea id="txtSinopsis" asp-for="Sinopsis" class="form-control" rows="3"></textarea>
+                            <button type="button" class="btn btn-outline-primary" onclick="generarSinopsisConIA()">✨ Generar con IA</button>
+                        </div>
+                        <span asp-validation-for="Sinopsis" class="text-danger"></span>
+                    </div>
+
+                    <!-- Campo ImagenUrl con opción de generar con IA -->
+                    <div class="mb-3">
+                        <label asp-for="ImagenUrl" class="form-label fw-bold">Imagen de la Película</label>
+                        <div class="input-group mb-2">
+                            <input id="txtImagenUrl" asp-for="ImagenUrl" class="form-control" type="url" placeholder="https://ejemplo.com/imagen.jpg" />
+                            <button type="button" class="btn btn-outline-primary" onclick="generarImagenConIA()">✨ Generar con IA</button>
+                        </div>
+                        <span asp-validation-for="ImagenUrl" class="text-danger"></span>
+                    </div>
+
+                    <!-- Botones de acción -->
+                    <div class="d-flex justify-content-between mt-4">
+                        <a asp-action="Index" class="btn btn-outline-secondary">Volver</a>
+                        <button type="submit" class="btn btn-warning fw-bold">Guardar Cambios</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");} <!-- Scripts de validación -->
+
+    <script>
+        // Función para generar sinopsis con IA
+        async function generarSinopsisConIA() {
+            const titulo = document.getElementById('txtTitulo').value;
+            const genero = document.getElementById('txtGenero').value;
+
+            if (!titulo.trim()) {
+                alert("Por favor escribe primero el Título de la película.");
+                return;
+            }
+
+            try {
+                const response = await fetch(`/Peliculas/GenerarSinopsisIA?titulo=${encodeURIComponent(titulo)}&genero=${encodeURIComponent(genero)}`);
+                const textoSinopsis = await response.text();
+                document.getElementById('txtSinopsis').value = textoSinopsis;
+            } catch (error) {
+                alert("Ocurrió un error al conectar con el servicio de IA.");
+            }
+        }
+
+        // Función para generar URL de imagen con IA
+        async function generarImagenConIA() {
+            const titulo = document.getElementById('txtTitulo').value;
+            const genero = document.getElementById('txtGenero').value;
+
+            if (!titulo.trim()) {
+                alert("Por favor escribe primero el Título de la película.");
+                return;
+            }
+
+            try {
+                const response = await fetch(`/Peliculas/GenerarImagenUrlIA?titulo=${encodeURIComponent(titulo)}&genero=${encodeURIComponent(genero)}`);
+                const urlImagen = await response.text();
+                document.getElementById('txtImagenUrl').value = urlImagen;
+            } catch (error) {
+                alert("Ocurrió un error al conectar con el servicio de IA.");
+            }
+        }
+    </script>
+}

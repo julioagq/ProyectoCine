@@ -1,0 +1,61 @@
+@model ProyectoCine.Models.Pelicula // El modelo que se recibe es una Película
+
+@{
+    ViewData["Title"] = "Detalles de la Película"; // Título de la página
+}
+@{
+    // Se aplica una clase al body para estilos de fondo
+    ViewData["BodyClass"] = "peliculas-page";
+
+    // Si la película tiene imagen, se usa como fondo; si no, se usa una imagen por defecto
+    var bgUrl = string.IsNullOrEmpty(Model?.ImagenUrl) ? "/images/peliculas.jpg" : Model.ImagenUrl;
+}
+
+<!-- Contenedor principal con fondo dinámico -->
+<div class="container py-4 details-hero section-overlay" 
+     style="background-image: url('@bgUrl'); background-size: cover; background-position: center; background-repeat: no-repeat;">
+    <div class="row justify-content-center">
+        <div class="col-md-9">
+            <div class="card details-card shadow-sm mt-3">
+                <!-- Encabezado -->
+                <div class="card-header bg-transparent">
+                    <h4 class="mb-0">Detalles de la Película</h4>
+                </div>
+                <div class="card-body">
+                    <!-- Lista de detalles de la película -->
+                    <dl class="row mb-0">
+                        <dt class="col-sm-4 text-muted">@Html.DisplayNameFor(model => model.Titulo)</dt>
+                        <dd class="col-sm-8 fw-bold fs-5 text-dark">@Html.DisplayFor(model => model.Titulo)</dd>
+
+                        <dt class="col-sm-4 text-muted">@Html.DisplayNameFor(model => model.Genero)</dt>
+                        <dd class="col-sm-8">@Html.DisplayFor(model => model.Genero)</dd>
+
+                        <dt class="col-sm-4 text-muted">@Html.DisplayNameFor(model => model.DuracionMinutos)</dt>
+                        <dd class="col-sm-8">@Html.DisplayFor(model => model.DuracionMinutos) min</dd>
+
+                        <dt class="col-sm-4 text-muted">@Html.DisplayNameFor(model => model.Clasificacion)</dt>
+                        <dd class="col-sm-8">
+                            <!-- Clasificación mostrada como badge -->
+                            <span class="badge bg-secondary">@Html.DisplayFor(model => model.Clasificacion)</span>
+                        </dd>
+
+                        <dt class="col-sm-4 text-muted">@Html.DisplayNameFor(model => model.Cine)</dt>
+                        <dd class="col-sm-8 fw-semibold text-primary">@Html.DisplayFor(model => model.Cine.Nombre)</dd>
+
+                        <dt class="col-sm-4 text-muted">@Html.DisplayNameFor(model => model.Sinopsis)</dt>
+                        <dd class="col-sm-8 text-secondary">
+                            <!-- Si no hay sinopsis, se muestra un mensaje alternativo -->
+                            @(string.IsNullOrEmpty(Model.Sinopsis) ? "Sin sinopsis disponible." : Model.Sinopsis)
+                        </dd>
+                    </dl>
+
+                    <!-- Botones de acción -->
+                    <div class="d-flex justify-content-between mt-4 pt-3 border-top">
+                        <a asp-action="Index" class="btn btn-outline-secondary">Volver</a>
+                        <a asp-action="Edit" asp-route-id="@Model?.Id" class="btn btn-warning">Editar</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,78 @@
+﻿@{
+    ViewData["Title"] = "Inicio";
+}
+
+<style>
+    .inicio-cine {
+        min-height: calc(100vh - 60px);
+        margin: -1rem -12px 0;
+        padding: 80px 20px;
+        display: flex;
+        align-items: flex-start;
+        justify-content: center;
+        text-align: center;
+        color: white;
+        background: linear-gradient(rgba(0, 0, 0, 0.65), rgba(0, 0, 0, 0.65)), url('/images/cine.jpg');
+        background-size: cover;
+        background-position: center;
+        background-repeat: no-repeat;
+        border-radius: 8px;
+    }
+
+    .inicio-contenido {
+        max-width: 900px;
+        padding-top: 30px;
+    }
+
+    /* 👇 Ajustes para forzar color blanco brillante en los textos del banner */
+    .inicio-contenido h1,
+    .inicio-contenido p {
+        color: #ffffff !important;
+    }
+
+    .inicio-contenido h1 {
+        font-size: clamp(2.2rem, 5vw, 4rem);
+        font-weight: bold;
+        margin-bottom: 20px;
+    }
+
+    .inicio-contenido p {
+        font-size: 1.2rem;
+        margin-bottom: 25px;
+    }
+
+    .btn-cartelera {
+        font-size: 1.2rem;
+        padding: 12px 26px;
+        border-radius: 10px;
+    }
+
+    .login-box { 
+        background: rgba(255,255,255,0.08); 
+        padding: 15px; 
+        border-radius: 8px; 
+        margin-top: 18px; 
+    }
+    .login-box input { 
+        margin-bottom: 8px; 
+    }
+</style>
+
+<section class="inicio-cine">
+    <div class="inicio-contenido">
+        <h1>¡Bienvenidos al Cine UH!</h1>
+
+        <p class="fs-4">¡Viví la magia del cine!</p>
+
+        <p>
+            Descubrí las películas disponibles, explorá nuestra cartelera
+            y encontrá tu próxima película favorita.
+        </p>
+
+        <a asp-controller="Peliculas"
+           asp-action="Index"
+           class="btn btn-primary btn-cartelera">
+            🎬 Ver cartelera
+        </a>
+    </div>
+</section>

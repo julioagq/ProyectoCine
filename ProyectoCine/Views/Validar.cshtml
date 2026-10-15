@@ -1,0 +1,40 @@
+﻿@{
+    ViewData["Title"] = "Validación de Entrada";
+}
+
+<div class="row justify-content-center mt-4">
+    <div class="col-md-6 text-center">
+        <div class="card shadow-lg border-0">
+            <div class="card-body p-5">
+                <h2 class="mb-4">📱 Control de Acceso</h2>
+
+                @if (ViewBag.EsValido == true)
+                {
+                    <div class="alert alert-success p-4 rounded-3 mb-4">
+                        <h3 class="fw-bold mb-2">✅ ENTRADA VÁLIDA</h3>
+                        <p class="mb-0 fs-5">Acceso Permitido a la Sala</p>
+                    </div>
+
+                    <div class="border rounded p-3 bg-light text-start">
+                        <p class="mb-1"><strong>Código de Entrada:</strong> 
+                           <span class="badge bg-secondary">@ViewBag.Codigo</span></p>
+                        <p class="mb-1"><strong>Estado:</strong> 
+                           <span class="text-success fw-bold">Confirmado</span></p>
+                        <p class="mb-0"><strong>Fecha de Escaneo:</strong> 
+                           @DateTime.Now.ToString("dd/MM/yyyy hh:mm tt")</p>
+                    </div>
+                }
+                else
+                {
+                    <div class="alert alert-danger p-4 rounded-3 mb-4">
+                        <h3 class="fw-bold mb-2">❌ ENTRADA INVÁLIDA</h3>
+                        <p class="mb-0 fs-5">El boleto no existe o ya ha sido utilizado.</p>
+                    </div>
+                }
+
+                <a asp-controller="Home" asp-action="Index" 
+                   class="btn btn-outline-secondary mt-4">Volver al Inicio</a>
+            </div>
+        </div>
+    </div>
+</div>

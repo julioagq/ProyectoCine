@@ -1,0 +1,46 @@
+@model ProyectoCine.Models.Funcion // El modelo que se recibe es una Función
+
+@{
+    ViewData["Title"] = "Eliminar Función"; // Título de la página
+}
+
+<div class="row justify-content-center">
+    <div class="col-md-6">
+        <div class="card shadow-sm border-danger mt-3">
+            <!-- Encabezado de advertencia -->
+            <div class="card-header bg-danger text-white">
+                <h4 class="mb-0">¿Eliminar esta función de la cartelera?</h4>
+            </div>
+            <div class="card-body">
+                <!-- Lista de detalles de la función -->
+                <dl class="row mb-0">
+                    <dt class="col-sm-4 text-muted">Película</dt>
+                    <dd class="col-sm-8 fw-bold fs-5">@Model.Pelicula?.Titulo</dd>
+
+                    <dt class="col-sm-4 text-muted">Sala y Cine</dt>
+                    <dd class="col-sm-8">@Model.Sala?.Nombre (@Model.Sala?.Cine?.Nombre)</dd>
+
+                    <dt class="col-sm-4 text-muted">Fecha y Hora</dt>
+                    <!-- Se muestra con formato día/mes/año y hora AM/PM -->
+                    <dd class="col-sm-8">@Model.FechaHora.ToString("dd/MM/yyyy hh:mm tt")</dd>
+
+                    <dt class="col-sm-4 text-muted">Precio</dt>
+                    <!-- Precio en colones con dos decimales -->
+                    <dd class="col-sm-8 text-danger fw-bold">₡@Model.Precio.ToString("N2")</dd>
+                </dl>
+
+                <!-- Formulario de confirmación -->
+                <form asp-action="Delete" class="mt-4 pt-3 border-top">
+                    <!-- Campo oculto con el Id de la función -->
+                    <input type="hidden" asp-for="Id" />
+                    <div class="d-flex justify-content-between">
+                        <!-- Botón para cancelar y volver -->
+                        <a asp-action="Index" class="btn btn-outline-secondary">Cancelar</a>
+                        <!-- Botón para confirmar eliminación -->
+                        <button type="submit" class="btn btn-danger">Confirmar Eliminación</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

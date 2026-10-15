@@ -1,0 +1,119 @@
+@model IEnumerable<ProyectoCine.Models.Sala> // El modelo es una colección de salas
+
+@{
+    ViewData["Title"] = "Lista de Salas"; // Título de la página
+}
+
+<style>
+    /* Estilos generales para la página de salas */
+    body.salas-page {
+        background-image: linear-gradient(rgba(0, 0, 0, 0.50), rgba(0, 0, 0, 0.65)), url('/images/salas.jpg'); /* Fondo con imagen */
+        background-size: cover;
+        background-position: center;
+        background-repeat: no-repeat;
+        background-attachment: fixed;
+    }
+
+    .salas-contenido {
+        padding: 25px;
+        min-height: 80vh; /* Altura mínima para dar aire */
+    }
+
+    .salas-titulo {
+        color: white;
+        text-shadow: 2px 2px 6px rgba(0, 0, 0, 0.8); /* Sombra para mejor visibilidad */
+    }
+
+    .salas-tabla {
+        background-color: rgba(255, 255, 255, 0.95); /* Fondo blanco semitransparente */
+        border-radius: 12px;
+        overflow: hidden;
+    }
+</style>
+
+<script>
+    // Agregar clase al body para aplicar estilos de fondo
+    document.body.classList.add('salas-page');
+</script>
+
+<div class="salas-contenido">
+    <!-- Encabezado con título y botón para agregar nueva sala -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1 class="display-6 fw-bold salas-titulo">Lista de Salas</h1>
+
+        <a asp-action="Create" class="btn btn-primary shadow-sm">
+            + Agregar Sala
+        </a>
+    </div>
+
+    <!-- Tabla de salas -->
+    <div class="card salas-tabla shadow-sm border-0">
+        <div class="card-body p-0">
+            <table class="table table-hover table-striped align-middle mb-0">
+                <thead class="table-dark">
+                    <tr>
+                        <th>@Html.DisplayNameFor(model => model.Nombre)</th>
+                        <th>@Html.DisplayNameFor(model => model.Capacidad)</th>
+                        <th>@Html.DisplayNameFor(model => model.Cine)</th>
+                        <th class="text-end pe-4">Acciones</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    @if (Model != null && Model.Any())
+                    {
+                        @foreach (var item in Model)
+                        {
+                            <tr>
+                                <!-- Nombre de la sala -->
+                                <td class="fw-bold">
+                                    @Html.DisplayFor(modelItem => item.Nombre)
+                                </td>
+
+                                <!-- Capacidad con la palabra "asientos" -->
+                                <td>
+                                    @Html.DisplayFor(modelItem => item.Capacidad) asientos
+                                </td>
+
+                                <!-- Cine al que pertenece la sala -->
+                                <td>
+                                    @Html.DisplayFor(modelItem => item.Cine.Nombre)
+                                </td>
+
+                                <!-- Botones de acción -->
+                                <td class="text-end pe-3">
+                                    <a asp-action="Edit"
+                                       asp-route-id="@item.Id"
+                                       class="btn btn-warning btn-sm">
+                                        Editar
+                                    </a>
+
+                                    <a asp-action="Details"
+                                       asp-route-id="@item.Id"
+                                       class="btn btn-info btn-sm text-white">
+                                        Detalles
+                                    </a>
+
+                                    <a asp-action="Delete"
+                                       asp-route-id="@item.Id"
+                                       class="btn btn-danger btn-sm">
+                                        Eliminar
+                                    </a>
+                                </td>
+                            </tr>
+                        }
+                    }
+                    else
+                    {
+                        <!-- Mensaje cuando no hay salas registradas -->
+                        <tr>
+                            <td colspan="4" class="text-center text-muted py-4">
+                                No hay salas registradas.
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

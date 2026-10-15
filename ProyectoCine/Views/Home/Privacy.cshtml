@@ -1,0 +1,71 @@
+﻿
+@{
+    ViewData["Title"] = "Políticas y privacidad";
+    // Asignar clase de sección para que _Layout y site.css apliquen el fondo
+    ViewData["BodyClass"] = "politicas-page";
+}
+
+<div class="container py-4 cine-content section-overlay">
+    <div class="mb-4">
+        <h1 class="fw-bold">Políticas y privacidad</h1>
+        <p class="text-muted">
+            Cine UH · Tu experiencia de cine, nuestra prioridad.
+        </p>
+    </div>
+
+    <div class="card shadow-sm border-0 mb-4">
+        <div class="card-body p-4">
+            <h4>1. Información general</h4>
+            <p>
+                Cine UH es una plataforma para consultar películas,
+                conocer sus detalles y revisar las funciones disponibles.
+                Buscamos ofrecer una experiencia clara y sencilla a nuestros usuarios.
+            </p>
+
+            <h4 class="mt-4">2. Información de los usuarios</h4>
+            <p>
+                La información que se solicite al utilizar el sistema deberá
+                utilizarse únicamente para las funciones correspondientes
+                de la plataforma, como la gestión de cuentas y las compras,
+                cuando estas opciones estén habilitadas.
+            </p>
+
+            <h4 class="mt-4">3. Uso responsable</h4>
+            <p>
+                Los usuarios deben utilizar la plataforma de forma responsable
+                y proporcionar información correcta cuando sea necesaria.
+            </p>
+
+            <h4 class="mt-4">4. Compras y reservas</h4>
+            <p>
+                Cuando las funciones de compra y reserva estén disponibles,
+                los detalles de cada operación deberán mostrarse al usuario
+                antes de confirmar la compra o reserva.
+            </p>
+
+            <h4 class="mt-4">5. Seguridad</h4>
+            <p>
+                Cine UH busca proteger la información administrada por el sistema
+                mediante las medidas de seguridad que se implementen en la aplicación.
+            </p>
+
+            <h4 class="mt-4">6. Contacto</h4>
+            <p class="mb-0">
+                Si tenés consultas sobre estas políticas, podés comunicarte
+                con el equipo administrador de Cine UH por los medios de contacto
+                que se habiliten en la plataforma.
+            </p>
+        </div>
+    </div>
+
+    <p class="text-muted small">
+        Estas políticas son informativas y deben ajustarse a las funciones
+        y prácticas reales del sistema antes de publicarlo.
+    </p>
+
+    <a asp-controller="Home"
+       asp-action="Index"
+       class="btn btn-dark">
+        Volver al inicio
+    </a>
+</div>

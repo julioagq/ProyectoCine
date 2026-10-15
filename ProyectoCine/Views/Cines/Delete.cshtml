@@ -1,0 +1,49 @@
+@using System.Globalization // Para formatear números con punto decimal
+@model ProyectoCine.Models.Cine // El modelo que se recibe es un Cine
+
+@{
+    ViewData["Title"] = "Eliminar Cine"; // Título de la página
+}
+
+<div class="row justify-content-center">
+    <div class="col-md-6">
+        <div class="card shadow-sm mt-3 border-danger">
+            <!-- Encabezado de advertencia -->
+            <div class="card-header bg-danger text-white">
+                <h4 class="mb-0 fw-bold">⚠️ ¿Está seguro que desea eliminar este cine?</h4>
+            </div>
+            <div class="card-body">
+                <!-- Lista de detalles del cine -->
+                <dl class="row fs-5">
+                    <dt class="col-sm-5 text-muted">Nombre:</dt>
+                    <dd class="col-sm-7 fw-bold">@Model.Nombre</dd>
+
+                    <dt class="col-sm-5 text-muted">Ubicación:</dt>
+                    <dd class="col-sm-7">@Model.Ubicacion</dd>
+
+                    <dt class="col-sm-5 text-muted">Número de Salas:</dt>
+                    <dd class="col-sm-7">@Model.NumeroSalas</dd>
+
+                    <dt class="col-sm-5 text-muted">Latitud:</dt>
+                    <!-- Se muestra con formato estándar (punto decimal) -->
+                    <dd class="col-sm-7"><code>@Model.Latitud.ToString(CultureInfo.InvariantCulture)</code></dd>
+
+                    <dt class="col-sm-5 text-muted">Longitud:</dt>
+                    <dd class="col-sm-7"><code>@Model.Longitud.ToString(CultureInfo.InvariantCulture)</code></dd>
+                </dl>
+
+                <!-- Formulario de confirmación -->
+                <form asp-action="Delete">
+                    <!-- Campo oculto con el Id del cine -->
+                    <input type="hidden" asp-for="Id" />
+                    <div class="d-flex justify-content-between mt-4">
+                        <!-- Botón para cancelar y volver -->
+                        <a asp-action="Index" class="btn btn-outline-secondary">Cancelar</a>
+                        <!-- Botón para confirmar eliminación -->
+                        <button type="submit" class="btn btn-danger fw-bold">Confirmar Eliminación</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

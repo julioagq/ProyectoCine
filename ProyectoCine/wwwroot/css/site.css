@@ -1,0 +1,323 @@
+html {
+  font-size: 14px;
+}
+
+@media (min-width: 768px) {
+  html {
+    font-size: 16px;
+  }
+}
+
+.btn:focus, .btn:active:focus, .btn-link.nav-link:focus, .form-control:focus, .form-check-input:focus {
+  box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
+}
+
+html {
+  position: relative;
+  min-height: 100%;
+}
+
+body {
+  margin-bottom: 60px;
+}
+
+.form-floating > .form-control-plaintext::placeholder, .form-floating > .form-control::placeholder {
+  color: var(--bs-secondary-color);
+  text-align: end;
+}
+
+.form-floating > .form-control-plaintext:focus::placeholder, .form-floating > .form-control:focus::placeholder {
+  text-align: start;
+}
+
+/* Estilos para la galería de películas */
+.movie-gallery {
+  gap: 0.75rem;
+  align-items: flex-start; /* alinear imágenes por la parte superior */
+  padding: 0.5rem 0; /* menos padding para ajustar margen */
+}
+.movie-card {
+  /* tarjeta uniforme más pequeña: ancho fijo, columna con poster + info */
+  flex: 0 0 160px;
+  width: 160px;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  box-sizing: border-box;
+  margin-right: 0.75rem; /* separación entre tarjetas */
+  min-height: 280px; /* altura total uniforme */
+  background: transparent;
+}
+.movie-poster {
+  width: 100%;
+  height: 220px; /* altura fija más pequeña para recortar imágenes de manera uniforme */
+  object-fit: cover;
+  border-radius: 8px;
+  transition: transform 0.14s ease, box-shadow 0.14s ease;
+  display: block;
+}
+.movie-card:hover .movie-poster {
+  transform: translateY(-4px) scale(1.02);
+  box-shadow: 0 8px 20px rgba(0,0,0,0.14);
+}
+.text-truncate {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+/* metadata area fixed height to keep cards aligned */
+.movie-info {
+  height: 60px; /* espacio suficiente para titulo + meta */
+  overflow: hidden;
+  padding-top: 6px;
+}
+
+.movie-title {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #111;
+}
+.movie-meta {
+  color: #6c757d;
+}
+.movie-genre, .movie-age {
+  display: inline-block;
+  max-width: 90px;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  overflow: hidden;
+}
+
+/* asegurar que las tarjetas recorten contenido y las imágenes no alteren la altura */
+.movie-card { overflow: hidden; }
+.movie-card img { display: block; }
+/* carousel wrapper controls */
+.carousel-wrapper { position: relative; }
+.carousel-nav {
+  position: absolute;
+  top: 40%;
+  transform: translateY(-50%);
+  z-index: 50;
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 6px 18px rgba(0,0,0,0.15);
+}
+.carousel-prev { left: -10px; }
+.carousel-next { right: -10px; }
+
+@media (max-width: 991px) {
+  .carousel-prev, .carousel-next { display: none; }
+}
+
+/* === Tema global Cine UH === */
+:root {
+  --ch-bg: #07101a; /* fondo oscuro principal */
+  --ch-surface: #0f1720; /* superficie de tarjetas */
+  --ch-accent: #258cfb; /* color acento */
+  --ch-muted: #98a0a6;
+  --ch-text: #e6eef6;
+  --radius-md: 10px;
+}
+
+body {
+  background-color: var(--ch-bg);
+  color: var(--ch-text);
+  font-family: "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+}
+
+.app-container {
+  padding: 1.25rem 0;
+}
+
+/* Botones principales y secundarios uniformes */
+.btn-primary {
+  background-color: var(--ch-accent);
+  border-color: rgba(37,140,251,0.18);
+}
+.btn-primary:hover, .btn-primary:focus {
+  background-color: #1f7fe0;
+}
+.btn-outline-secondary {
+  color: var(--ch-text);
+  border-color: rgba(255,255,255,0.06);
+}
+
+/* Tarjetas coherentes */
+.card {
+  /* Tarjeta clara por defecto: fondo blanco para mejorar legibilidad */
+  background-color: #ffffff;
+  border: 1px solid rgba(0,0,0,0.06);
+  color: #111827; /* texto oscuro en tarjetas */
+  border-radius: var(--radius-md);
+  box-shadow: 0 6px 18px rgba(2,6,23,0.06);
+}
+.card .card-body { background: transparent; color: inherit; }
+
+/* Variante de tarjeta oscura si se necesita */
+.card-dark {
+  background-color: var(--ch-surface);
+  color: var(--ch-text);
+}
+
+/* Tablas modernas */
+.table thead th { background:#0b1318; color:var(--ch-text); border-bottom:1px solid rgba(255,255,255,0.03); }
+.table tbody td { background: transparent; color: inherit; }
+.table-hover tbody tr:hover { background: rgba(255,255,255,0.02); }
+
+/* Formularios */
+.form-control { background: #ffffff; color: #111827; border: 1px solid rgba(0,0,0,0.08); }
+.form-select { background: #ffffff; color: #111827; border: 1px solid rgba(0,0,0,0.08); }
+
+/* Card headers and text inside cards should be dark for readability */
+.card .card-header,
+.card .card-header h1,
+.card .card-header h2,
+.card .card-header h3,
+.card .card-header h4 { color: #111827; background: transparent; }
+.card h1, .card h2, .card h3, .card h4, .card p, .card label { color: #111827; }
+
+/* Outline secondary should be dark on light cards */
+.btn-outline-secondary { color: #111827; border-color: rgba(0,0,0,0.08); }
+
+/* Titulares */
+h1, h2, h3, h4 { color: var(--ch-text); }
+
+/* Secciones con fondo específico (usar ViewData["BodyClass"]) */
+.politicas-page .cine-content,
+.peliculas-page .cine-content,
+.cines-page .cine-content,
+.salas-page .cine-content,
+.funciones-page .cine-content {
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+  position: relative;
+}
+
+/* Capa oscura común para mejorar legibilidad */
+.section-overlay::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(rgba(6,10,18,0.55), rgba(6,10,18,0.66));
+  pointer-events: none;
+  border-radius: inherit;
+}
+
+/* Fondos por sección (si las imágenes existen, se usarán) */
+.politicas-page .cine-content { background-image: url('/images/politicas.jpg'); }
+.peliculas-page .cine-content { background-image: url('/images/peliculas.jpg'); }
+.cines-page .cine-content { background-image: url('/images/cines.jpg'); }
+.salas-page .cine-content { background-image: url('/images/salas.jpg'); }
+.funciones-page .cine-content { background-image: url('/images/cartelera.png'); }
+
+/* Si no hay imagen, fallback a un degradado oscuro */
+.politicas-page .cine-content:not([style]) { background-image: linear-gradient(180deg,#07101a,#0b1720); }
+
+/* Ajustes responsivos generales */
+@media (max-width: 991px) {
+  body { font-size: 15px; }
+}
+
+/* === Ajustes específicos para la sección Políticas y privacidad === */
+.politicas-page .cine-content.section-overlay::before {
+  /* reducir la oscuridad del overlay para permitir legibilidad del texto blanco */
+  background: linear-gradient(rgba(6,10,18,0.30), rgba(6,10,18,0.32));
+}
+
+.politicas-page h1 {
+  color: #ffffff !important;
+  text-shadow: 0 2px 6px rgba(0,0,0,0.6);
+}
+
+.politicas-page .cine-content > .mb-4 p.text-muted {
+  /* subtítulo fuera de la tarjeta: claro */
+  color: rgba(255,255,255,0.9) !important;
+}
+
+.politicas-page .card {
+  /* tarjeta clara y legible dentro de la sección */
+  background-color: #f8fafc; /* gris muy claro */
+  color: #1f2937; /* texto oscuro */
+  border: 1px solid rgba(15,23,42,0.06);
+}
+
+.politicas-page .card .card-body h4,
+.politicas-page .card .card-body p,
+.politicas-page .card .card-body li,
+.politicas-page .card .card-body dt,
+.politicas-page .card .card-body dd {
+  color: #1f2937; /* encabezados y párrafos oscuros dentro de la tarjeta */
+}
+
+.politicas-page .card .card-body h4 { font-weight: 700; }
+
+.politicas-page .card .card-body p { font-size: 0.98rem; line-height: 1.6; }
+
+/* Asegurar que los textos dentro de la tarjeta no se vean con estilo text-muted oscuro */
+.politicas-page .card .text-muted { color: #6b7280 !important; }
+
+/* Ajustes para enlaces y botones dentro de politicas */
+.politicas-page .btn { color: #ffffff; }
+.politicas-page .btn-outline-secondary { color: #111827; border-color: rgba(0,0,0,0.08); }
+
+
+
+/* Colores generales de Cine UH */
+body {
+    background-color: #f1f3f5;
+    color: #212529;
+}
+
+/* Barra superior */
+.cine-topbar {
+    background-color: #ffffff;
+    color: #212529;
+}
+
+    .cine-topbar span {
+        color: #212529;
+    }
+
+/* Contenido principal */
+.cine-content {
+    color: #212529;
+}
+
+    /* Formularios */
+    .cine-content h1,
+    .cine-content h2,
+    .cine-content h3,
+    .cine-content p,
+    .cine-content label {
+        color: #212529;
+    }
+
+/* Campos de texto */
+.form-control {
+    color: #212529;
+    background-color: #ffffff;
+    border: 1px solid #adb5bd;
+}
+
+/* Menú lateral */
+.cine-sidebar {
+    background-color: #171923;
+    color: #ffffff;
+}
+
+    .cine-sidebar .nav-link {
+        color: #e2e8f0;
+    }
+
+/* Botones */
+.btn-primary {
+    background-color: #0d6efd;
+    border-color: #0d6efd;
+}

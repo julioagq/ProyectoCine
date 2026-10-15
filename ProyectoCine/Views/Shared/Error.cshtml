@@ -1,0 +1,25 @@
+﻿@model ProyectoCine.Models.ErrorViewModel
+@{
+    ViewData["Title"] = "Error";
+}
+
+<h1 class="text-danger">Error.</h1>
+<h2 class="text-danger">Ocurrió un problema al procesar tu solicitud.</h2>
+
+@if (Model.ShowRequestId)
+{
+    <p>
+        <strong>ID de la solicitud:</strong> <code>@Model.RequestId</code>
+    </p>
+}
+
+<h3>Modo de Desarrollo</h3>
+<p>
+    Si activas el <strong>Development</strong> environment, se mostrará información más detallada del error.
+</p>
+<p>
+    <strong>No se recomienda habilitar el entorno de Development en producción.</strong>
+    Puede mostrar información sensible a los usuarios finales.
+    Para depuración local, establece la variable <strong>ASPNETCORE_ENVIRONMENT</strong> en <strong>Development</strong>
+    y reinicia la aplicación.
+</p>

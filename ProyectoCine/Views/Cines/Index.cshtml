@@ -1,0 +1,101 @@
+@model IEnumerable<ProyectoCine.Models.Cine> // El modelo es una colección de cines
+
+@{
+    ViewData["Title"] = "Lista de Cines"; // Título de la página
+}
+
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h2>Lista de Cines</h2>
+        <!-- Botón para agregar un nuevo cine -->
+        <a asp-action="Create" class="btn btn-primary">+ Agregar Cine</a>
+    </div>
+
+    <!-- Mapa general con todos los cines -->
+    <div class="mb-4">
+        <div id="mapaCines" style="height: 350px; width: 100%;" class="rounded border shadow-sm"></div>
+    </div>
+
+    <!-- Tabla con estilos y acciones -->
+    <div class="card shadow-sm">
+        <div class="card-body bg-white rounded">
+            <table class="table table-striped table-bordered table-hover text-dark align-middle mb-0">
+                <thead class="table-dark text-white">
+                    <tr>
+                        <th>@Html.DisplayNameFor(model => model.Nombre)</th>
+                        <th>@Html.DisplayNameFor(model => model.Ubicacion)</th>
+                        <th>@Html.DisplayNameFor(model => model.NumeroSalas)</th>
+                        <th>@Html.DisplayNameFor(model => model.Latitud)</th>
+                        <th>@Html.DisplayNameFor(model => model.Longitud)</th>
+                        <th class="text-center">Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model) {
+                        <tr class="fw-semibold">
+                            <!-- Datos del cine -->
+                            <td>@Html.DisplayFor(modelItem => item.Nombre)</td>
+                            <td>@Html.DisplayFor(modelItem => item.Ubicacion)</td>
+                            <td>@Html.DisplayFor(modelItem => item.NumeroSalas)</td>
+                            <td>@item.Latitud.ToString(System.Globalization.CultureInfo.InvariantCulture)</td>
+                            <td>@item.Longitud.ToString(System.Globalization.CultureInfo.InvariantCulture)</td>
+                            <td class="text-center">
+                                <!-- Botones de acción -->
+                                <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-warning btn-sm fw-bold">Editar</a> |
+                                <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-info btn-sm text-white fw-bold">Detalles</a> |
+                                <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-danger btn-sm fw-bold">Eliminar</a>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<!-- Estilos de Leaflet -->
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+
+@section Scripts {
+    <!-- Script de Leaflet -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            // Inicializar mapa centrado en Costa Rica
+            var map = L.map('mapaCines').setView([9.9333, -84.0833], 9);
+
+            // Capa base de OpenStreetMap
+            L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                maxZoom: 19,
+                attribution: '&copy; OpenStreetMap'
+            }).addTo(map);
+
+            // Inyectar datos de cines desde el modelo
+            var cines = [
+                @foreach (var item in Model)
+                {
+                    <text>{
+                        nombre: "@item.Nombre",
+                        ubicacion: "@item.Ubicacion",
+                        lat: @item.Latitud.ToString(System.Globalization.CultureInfo.InvariantCulture),
+                        lng: @item.Longitud.ToString(System.Globalization.CultureInfo.InvariantCulture)
+                    },</text>
+                }
+            ];
+
+            // Crear un marcador por cada cine
+            cines.forEach(function(cine) {
+                if (cine.lat && cine.lng) {
+                    L.marker([cine.lat, cine.lng])
+                      .addTo(map)
+                      .bindPopup("<b>" + cine.nombre + "</b><br>" + cine.ubicacion);
+                }
+            });
+
+            // Ajustar tamaño del mapa después de cargar
+            setTimeout(function () {
+                map.invalidateSize();
+            }, 200);
+        });
+    </script>
+}

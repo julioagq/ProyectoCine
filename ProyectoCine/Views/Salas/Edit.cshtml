@@ -1,0 +1,84 @@
+@model ProyectoCine.Models.Sala // El modelo que se recibe es una Sala
+
+@{
+    ViewData["Title"] = "Editar Sala"; // Título de la página
+}
+
+<div class="row justify-content-center">
+    <div class="col-md-6">
+        <div class="card shadow-sm mt-3">
+            <!-- Encabezado visual -->
+            <div class="card-header bg-warning text-dark">
+                <h4 class="mb-0">Editar Sala</h4>
+            </div>
+
+            <div class="card-body">
+                <!-- Formulario para editar una sala -->
+                <form asp-action="Edit" method="post">
+
+                    <!-- Validación de errores del modelo -->
+                    <div asp-validation-summary="ModelOnly"
+                         class="text-danger mb-3"></div>
+
+                    <!-- Campo oculto con el Id de la sala -->
+                    <input type="hidden" asp-for="Id" />
+
+                    <!-- Campo Nombre -->
+                    <div class="mb-3">
+                        <label asp-for="Nombre"
+                               class="form-label fw-bold"></label>
+                        <input asp-for="Nombre" class="form-control" />
+                        <span asp-validation-for="Nombre"
+                              class="text-danger"></span>
+                    </div>
+
+                    <!-- Campo Capacidad -->
+                    <div class="mb-3">
+                        <label asp-for="Capacidad"
+                               class="form-label fw-bold"></label>
+                        <input asp-for="Capacidad"
+                               class="form-control"
+                               type="number" />
+                        <span asp-validation-for="Capacidad"
+                              class="text-danger"></span>
+                    </div>
+
+                    <!-- Campo Cine asignado -->
+                    <div class="mb-3">
+                        <label asp-for="CineId"
+                               class="form-label fw-bold">
+                            Cine Asignado
+                        </label>
+                        <select asp-for="CineId"
+                                class="form-select"
+                                asp-items="ViewBag.CineId">
+                            <option value="">-- Seleccionar Cine --</option>
+                        </select>
+                        <span asp-validation-for="CineId"
+                              class="text-danger"></span>
+                    </div>
+
+                    <!-- Campos de imagen eliminados: se usará un fondo general para la sección de Salas -->
+
+                    <!-- Botones de acción -->
+                    <div class="d-flex justify-content-between mt-4">
+                        <a asp-action="Index"
+                           class="btn btn-outline-secondary">
+                            Volver
+                        </a>
+                        <button type="submit"
+                                class="btn btn-warning">
+                            Guardar Cambios
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial"); // Scripts de validación
+    }
+}

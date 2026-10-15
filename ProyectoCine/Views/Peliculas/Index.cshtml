@@ -1,0 +1,111 @@
+@model IEnumerable<ProyectoCine.Models.Pelicula> // El modelo es una colección de películas
+
+@{
+    ViewData["Title"] = "Lista de Películas"; // Título de la página
+}
+
+<style>
+    /* Estilos generales para la página de películas */
+    body.peliculas-page {
+        background-image:
+            linear-gradient(
+                rgba(8, 12, 28, 0.55),
+                rgba(8, 12, 28, 0.70)
+            ),
+            url('/images/peliculas.jpg'); /* Imagen de fondo */
+
+        background-size: cover;
+        background-position: center;
+        background-repeat: no-repeat;
+        background-attachment: fixed;
+    }
+
+    body.peliculas-page .cine-content {
+        background-color: transparent; /* Fondo transparente para contenido */
+    }
+
+    body.peliculas-page h1 {
+        color: white; /* Título en blanco */
+        text-shadow: 2px 2px 6px rgba(0, 0, 0, 0.85); /* Sombra para mejor visibilidad */
+    }
+</style>
+
+<script>
+    // Agregar clase al body para aplicar estilos de fondo
+    document.body.classList.add('peliculas-page');
+</script>
+
+<!-- Encabezado con título y botón para agregar nueva película -->
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h2>Lista de Películas</h2>
+    <a asp-action="Create" class="btn btn-primary">+ Agregar Película</a>
+</div>
+
+<div class="table-responsive">
+    <style>
+        /* Estilos locales para la cuadrícula de pósters */
+        .index-movie-grid {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            align-items: flex-start;
+            justify-content: flex-start;
+            padding: 8px 0;
+        }
+        .index-movie-item {
+            flex: 0 0 160px; /* ancho fijo por tarjeta */
+            width: 160px;
+            box-sizing: border-box;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+        }
+        .index-movie-thumb {
+            width: 160px;
+            height: 230px;
+            object-fit: cover; /* recortar sin deformar */
+            border-radius: 6px;
+            display: block;
+            box-shadow: 0 6px 18px rgba(0,0,0,0.08);
+        }
+        .index-movie-title {
+            margin-top: 8px;
+            font-size: 0.95rem;
+            font-weight: 600;
+            color: #212529;
+            width: 100%;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+        .index-movie-meta {
+            margin-top: 4px;
+            font-size: 0.85rem;
+            color: #6c757d;
+            display: block;
+            width: 100%;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+    </style>
+
+    <!-- Cuadrícula de películas -->
+    <div class="index-movie-grid">
+        @foreach (var item in Model)
+        {
+            // Si no hay imagen, se usa un placeholder
+            var imageUrl = string.IsNullOrEmpty(item.ImagenUrl) ? "https://via.placeholder.com/160x230?text=Sin+imagen" : item.ImagenUrl;
+            <div class="index-movie-item">
+                <!-- Imagen con enlace a detalles -->
+                <a asp-action="Details" asp-route-id="@item.Id" title="@item.Titulo">
+                    <img src="@imageUrl" alt="@item.Titulo" class="index-movie-thumb" />
+                </a>
+                <!-- Título de la película -->
+                <div class="index-movie-title" title="@item.Titulo">@item.Titulo</div>
+                <!-- Género y clasificación -->
+                <div class="index-movie-meta">@item.Genero @(" • ") @item.Clasificacion</div>
+            </div>
+        }
+    </div>
+</div>

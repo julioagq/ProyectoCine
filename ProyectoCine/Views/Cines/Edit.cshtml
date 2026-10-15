@@ -1,0 +1,155 @@
+@using System.Globalization // Para asegurar que las coordenadas se manejen con punto decimal
+@model ProyectoCine.Models.Cine // El modelo que se recibe es un Cine
+
+@{
+    ViewData["Title"] = "Editar Cine"; // Título de la página
+}
+
+<!-- Estilos del Mapa Leaflet -->
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="card shadow-sm mt-3">
+            <!-- Encabezado visual -->
+            <div class="card-header bg-warning text-dark">
+                <h4 class="mb-0 fw-bold">Editar Cine</h4>
+            </div>
+            <div class="card-body">
+                <!-- Formulario para editar cine -->
+                <form asp-action="Edit" id="editForm">
+                    <!-- Validación de modelo -->
+                    <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+                    <!-- Campo oculto con el Id -->
+                    <input type="hidden" asp-for="Id" />
+
+                    <!-- Campo Nombre -->
+                    <div class="mb-3">
+                        <label asp-for="Nombre" class="form-label fw-bold"></label>
+                        <input asp-for="Nombre" class="form-control" />
+                        <span asp-validation-for="Nombre" class="text-danger"></span>
+                    </div>
+
+                    <!-- Campo Ubicación -->
+                    <div class="mb-3">
+                        <label asp-for="Ubicacion" class="form-label fw-bold"></label>
+                        <input asp-for="Ubicacion" class="form-control" />
+                        <span asp-validation-for="Ubicacion" class="text-danger"></span>
+                    </div>
+
+                    <!-- Campo Número de Salas -->
+                    <div class="mb-3">
+                        <label asp-for="NumeroSalas" class="form-label fw-bold"></label>
+                        <input asp-for="NumeroSalas" class="form-control" type="number" />
+                        <span asp-validation-for="NumeroSalas" class="text-danger"></span>
+                    </div>
+
+                    <!-- Campos de coordenadas -->
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label asp-for="Latitud" class="form-label fw-bold"></label>
+                            <input asp-for="Latitud" id="Latitud" value="@Model.Latitud.ToString(CultureInfo.InvariantCulture)" class="form-control" type="number" step="any" />
+                            <span asp-validation-for="Latitud" class="text-danger"></span>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label asp-for="Longitud" class="form-label fw-bold"></label>
+                            <input asp-for="Longitud" id="Longitud" value="@Model.Longitud.ToString(CultureInfo.InvariantCulture)" class="form-control" type="number" step="any" />
+                            <span asp-validation-for="Longitud" class="text-danger"></span>
+                        </div>
+                    </div>
+
+                    <!-- Contenedor del mapa interactivo -->
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">Ubicación en el Mapa (Arrastra el marcador o haz clic)</label>
+                        <div id="editMap" style="height: 320px; width: 100%;" class="rounded border"></div>
+                    </div>
+
+                    <!-- Botones de acción -->
+                    <div class="d-flex justify-content-between mt-4">
+                        <a asp-action="Index" class="btn btn-outline-secondary">Volver</a>
+                        <button type="submit" class="btn btn-warning fw-bold">Guardar Cambios</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");} <!-- Scripts de validación -->
+
+    <!-- Script de Leaflet -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            var latInput = document.getElementById("Latitud");
+            var lngInput = document.getElementById("Longitud");
+
+            // Obtener valores iniciales desde los inputs (con seguridad contra comas)
+            var lat = parseFloat(latInput.value.replace(',', '.')) || 9.9333;
+            var lng = parseFloat(lngInput.value.replace(',', '.')) || -84.0833;
+
+            // Inicializar mapa centrado en coordenadas actuales
+            var map = L.map('editMap').setView([lat, lng], 14);
+
+            // Capa base de OpenStreetMap
+            L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                maxZoom: 19,
+                attribution: '&copy; OpenStreetMap'
+            }).addTo(map);
+
+            // Crear marcador arrastrable
+            var marker = L.marker([lat, lng], { draggable: true }).addTo(map);
+
+            // Función para actualizar inputs con posición del marcador
+            function actualizarInputs(latLng) {
+                latInput.value = latLng.lat.toFixed(6);
+                lngInput.value = latLng.lng.toFixed(6);
+            }
+
+            // Evento al arrastrar el marcador
+            marker.on('dragend', function (e) {
+                var position = marker.getLatLng();
+                map.panTo(position);
+                actualizarInputs(position);
+            });
+
+            // Evento al hacer clic en el mapa
+            map.on('click', function (e) {
+                marker.setLatLng(e.latlng);
+                actualizarInputs(e.latlng);
+            });
+
+            // Actualizar mapa si se escriben coordenadas manualmente en Latitud
+            latInput.addEventListener('input', function () {
+                var nuevaLat = parseFloat(latInput.value.replace(',', '.'));
+                var currentLng = marker.getLatLng().lng;
+                if (!isNaN(nuevaLat)) {
+                    marker.setLatLng([nuevaLat, currentLng]);
+                    map.panTo([nuevaLat, currentLng]);
+                }
+            });
+
+            // Actualizar mapa si se escriben coordenadas manualmente en Longitud
+            lngInput.addEventListener('input', function () {
+                var nuevaLat = marker.getLatLng().lat;
+                var nuevaLng = parseFloat(lngInput.value.replace(',', '.'));
+                if (!isNaN(nuevaLng)) {
+                    marker.setLatLng([nuevaLat, nuevaLng]);
+                    map.panTo([nuevaLat, nuevaLng]);
+                }
+            });
+
+            // Seguridad: reemplazar comas por puntos al enviar formulario
+            document.getElementById("editForm").addEventListener("submit", function () {
+                latInput.value = latInput.value.replace(',', '.');
+                lngInput.value = lngInput.value.replace(',', '.');
+            });
+
+            // Ajustar tamaño del mapa después de cargar
+            setTimeout(function () {
+                map.invalidateSize();
+            }, 200);
+        });
+    </script>
+}
