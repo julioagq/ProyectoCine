@@ -1,128 +1,74 @@
-@using System.Globalization // Para formatear coordenadas con punto decimal
-@model ProyectoCine.Models.Cine // El modelo que se recibe es un Cine
+@model ProyectoCine.Models.Cine
 
 @{
-    ViewData["Title"] = "Editar Sede del Cine"; // Título de la página
+    ViewData["Title"] = "Detalles de la Sede";
+    var esAdmin = User?.Identity?.IsAuthenticated == true && 
+                  User.Identity.Name != null && 
+                  User.Identity.Name.Trim().ToLower() == "admin@cine.com";
 }
 
-<!-- Estilos del Mapa Leaflet -->
-<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+<div class="container mt-4 text-white">
+    <h2 class="text-warning fw-bold mb-3">Detalles de la Sede del Cine</h2>
+    <hr class="border-secondary" />
 
-<div class="row justify-content-center">
-    <div class="col-md-8">
-        <div class="card shadow-sm mt-3">
-            <!-- Encabezado con advertencia visual y el ID del cine -->
-            <div class="card-header bg-warning text-dark d-flex justify-content-between align-items-center">
-                <h4 class="mb-0">📍 Editar Ubicación del Cine</h4>
-                <span class="badge bg-dark text-white">ID: @Model.Id</span>
+    <div class="card bg-dark border-secondary p-4 shadow-lg">
+        <div class="mb-3">
+            <label class="form-label text-warning fw-bold">Nombre del Cine</label>
+            <div class="form-control bg-dark text-white fw-bold border-secondary">@Model.Nombre</div>
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label text-warning fw-bold">Ubicación</label>
+            <div class="form-control bg-dark text-white border-secondary">@Model.Ubicacion</div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-6 mb-3">
+                <label class="form-label text-warning fw-bold">Latitud</label>
+                <div class="form-control bg-dark text-white border-secondary">@Model.Latitud</div>
             </div>
-            <div class="card-body">
-                <!-- Formulario para editar el cine -->
-                <form asp-action="Edit">
-                    <!-- Campo oculto con el Id -->
-                    <input type="hidden" asp-for="Id" />
-                    
-                    <!-- Campo Nombre -->
-                    <div class="mb-3">
-                        <label asp-for="Nombre" class="form-label fw-bold"></label>
-                        <input asp-for="Nombre" class="form-control" />
-                    </div>
-
-                    <!-- Campo Ubicación -->
-                    <div class="mb-3">
-                        <label asp-for="Ubicacion" class="form-label fw-bold"></label>
-                        <input asp-for="Ubicacion" class="form-control" />
-                    </div>
-
-                    <!-- Campos de coordenadas -->
-                    <div class="row">
-                        <div class="col-md-6 mb-3">
-                            <label asp-for="Latitud" class="form-label fw-bold"></label>
-                            <input asp-for="Latitud" id="Latitud" value="@Model.Latitud.ToString(CultureInfo.InvariantCulture)" class="form-control" />
-                            <span asp-validation-for="Latitud" class="text-danger"></span>
-                        </div>
-                        <div class="col-md-6 mb-3">
-                            <label asp-for="Longitud" class="form-label fw-bold"></label>
-                            <input asp-for="Longitud" id="Longitud" value="@Model.Longitud.ToString(CultureInfo.InvariantCulture)" class="form-control" />
-                            <span asp-validation-for="Longitud" class="text-danger"></span>
-                        </div>
-                    </div>
-
-                    <!-- Mapa interactivo -->
-                    <h5 class="fw-bold mb-3">Actualizar Ubicación en el Mapa (Arrastra el marcador o escribe las coordenadas)</h5>
-                    <div id="detailMap" style="height: 350px; width: 100%;" class="rounded border mb-3"></div>
-
-                    <!-- Botones de acción -->
-                    <div class="d-flex justify-content-between mt-4">
-                        <a asp-action="Index" class="btn btn-outline-secondary">Volver a la lista</a>
-                        <button type="submit" class="btn btn-success">Guardar Cambios</button>
-                    </div>
-                </form>
+            <div class="col-md-6 mb-3">
+                <label class="form-label text-warning fw-bold">Longitud</label>
+                <div class="form-control bg-dark text-white border-secondary">@Model.Longitud</div>
             </div>
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label text-warning fw-bold">Ubicación en el Mapa</label>
+            <div id="map" style="height: 350px; width: 100%; border-radius: 6px; border: 1px solid #6c757d;"></div>
+        </div>
+
+        <div class="d-flex justify-content-between align-items-center mt-4 pt-3 border-top border-secondary">
+            <a asp-action="Index" class="btn btn-secondary px-4 fw-bold">Volver a la lista</a>
+
+            @if (esAdmin)
+            {
+                <a asp-action="Edit" asp-route-id="@Model?.Id" class="btn btn-warning fw-bold px-4">Editar esta Sede</a>
+            }
         </div>
     </div>
 </div>
 
-<!-- Script del Mapa Leaflet dinámico -->
-<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-<script>
-    document.addEventListener("DOMContentLoaded", function () {
-        var latInput = document.getElementById("Latitud");
-        var lngInput = document.getElementById("Longitud");
+@section Scripts {
+    <!-- Leaflet CSS y JS para el mapa interactivo -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
-        // Obtener valores iniciales desde el modelo (con punto decimal)
-        var lat = parseFloat("@Model.Latitud.ToString(CultureInfo.InvariantCulture)") || 9.9333;
-        var lng = parseFloat("@Model.Longitud.ToString(CultureInfo.InvariantCulture)") || -84.0833;
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            var lat = parseFloat('@Model.Latitud'.replace(',', '.')) || 9.9281;
+            var lng = parseFloat('@Model.Longitud'.replace(',', '.')) || -84.0907;
 
-        // Inicializar el mapa con la ubicación actual del cine
-        var map = L.map('detailMap').setView([lat, lng], 14);
+            var map = L.map('map').setView([lat, lng], 15);
 
-        // Capa base de OpenStreetMap
-        L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
-            maxZoom: 19,
-            attribution: '&copy; OpenStreetMap'
-        }).addTo(map);
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                maxZoom: 19,
+                attribution: '© OpenStreetMap'
+            }).addTo(map);
 
-        // Crear marcador arrastrable
-        var marker = L.marker([lat, lng], { draggable: true }).addTo(map);
-
-        // Función para actualizar los inputs con la posición del marcador
-        function actualizarInputs(latLng) {
-            latInput.value = latLng.lat.toFixed(6);
-            lngInput.value = latLng.lng.toFixed(6);
-        }
-
-        // Evento al arrastrar el marcador
-        marker.on('dragend', function (e) {
-            var position = marker.getLatLng();
-            map.panTo(position);
-            actualizarInputs(position);
+            L.marker([lat, lng]).addTo(map)
+                .bindPopup("<b>@Model.Nombre</b><br />@Model.Ubicacion")
+                .openPopup();
         });
-
-        // Evento al hacer clic en el mapa para mover el marcador
-        map.on('click', function (e) {
-            marker.setLatLng(e.latlng);
-            actualizarInputs(e.latlng);
-        });
-
-        // Actualizar mapa si el usuario escribe coordenadas manualmente
-        function actualizarMapaDesdeInputs() {
-            var nuevaLat = parseFloat(latInput.value.replace(',', '.'));
-            var nuevaLng = parseFloat(lngInput.value.replace(',', '.'));
-
-            if (!isNaN(nuevaLat) && !isNaN(nuevaLng)) {
-                var nuevaPos = [nuevaLat, nuevaLng];
-                marker.setLatLng(nuevaPos);
-                map.setView(nuevaPos, map.getZoom());
-            }
-        }
-
-        latInput.addEventListener('input', actualizarMapaDesdeInputs);
-        lngInput.addEventListener('input', actualizarMapaDesdeInputs);
-
-        // Ajusta el tamaño del mapa después de cargar
-        setTimeout(function () {
-            map.invalidateSize();
-        }, 200);
-    });
-</script>
+    </script>
+}

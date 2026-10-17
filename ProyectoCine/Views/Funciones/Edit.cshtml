@@ -1,17 +1,33 @@
 @model ProyectoCine.Models.Funcion // El modelo que se recibe es una Función
-
 @{
     ViewData["Title"] = "Editar Función"; // Título de la página
 }
 
+<style>
+    body.funciones-edit-page {
+        background-image: linear-gradient(
+            rgba(8, 12, 28, 0.55), 
+            rgba(8, 12, 28, 0.70)
+        ), url('/images/peliculas.jpg');
+        background-size: cover;
+        background-position: center;
+        background-repeat: no-repeat;
+        background-attachment: fixed;
+    }
+</style>
+
+<script>
+    document.body.classList.add('funciones-edit-page');
+</script>
+
 <div class="row justify-content-center">
     <div class="col-md-6">
-        <div class="card shadow-sm mt-3">
+        <div class="card shadow-sm mt-3 bg-dark text-white border-secondary">
             <!-- Encabezado visual -->
-            <div class="card-header bg-warning text-dark">
+            <div class="card-header bg-warning text-dark fw-bold">
                 <h4 class="mb-0">Editar Función</h4>
             </div>
-            <div class="card-body">
+            <div class="card-body bg-dark text-white">
                 <!-- Formulario para editar una función -->
                 <form asp-action="Edit">
                     <!-- Validación de errores del modelo -->
@@ -21,8 +37,8 @@
 
                     <!-- Selección de Película -->
                     <div class="mb-3">
-                        <label asp-for="PeliculaId" class="form-label fw-bold">Película</label>
-                        <select asp-for="PeliculaId" class="form-select" asp-items="ViewBag.PeliculaId">
+                        <label asp-for="PeliculaId" class="form-label fw-bold text-warning">Película</label>
+                        <select asp-for="PeliculaId" class="form-select bg-dark text-white border-secondary" asp-items="ViewBag.PeliculaId">
                             <option value="">-- Seleccionar Película --</option>
                         </select>
                         <span asp-validation-for="PeliculaId" class="text-danger"></span>
@@ -30,8 +46,8 @@
 
                     <!-- Selección de Sala -->
                     <div class="mb-3">
-                        <label asp-for="SalaId" class="form-label fw-bold">Sala</label>
-                        <select asp-for="SalaId" class="form-select" asp-items="ViewBag.SalaId">
+                        <label asp-for="SalaId" class="form-label fw-bold text-warning">Sala</label>
+                        <select asp-for="SalaId" class="form-select bg-dark text-white border-secondary" asp-items="ViewBag.SalaId">
                             <option value="">-- Seleccionar Sala --</option>
                         </select>
                         <span asp-validation-for="SalaId" class="text-danger"></span>
@@ -39,22 +55,22 @@
 
                     <!-- Fecha y Hora de la función -->
                     <div class="mb-3">
-                        <label asp-for="FechaHora" class="form-label fw-bold"></label>
-                        <input asp-for="FechaHora" class="form-control" type="datetime-local" />
+                        <label asp-for="FechaHora" class="form-label fw-bold text-warning"></label>
+                        <input asp-for="FechaHora" class="form-control bg-dark text-white border-secondary" type="datetime-local" />
                         <span asp-validation-for="FechaHora" class="text-danger"></span>
                     </div>
 
                     <!-- Precio de la entrada -->
                     <div class="mb-3">
-                        <label asp-for="Precio" class="form-label fw-bold"></label>
-                        <input asp-for="Precio" class="form-control" type="number" step="0.01" />
+                        <label asp-for="Precio" class="form-label fw-bold text-warning"></label>
+                        <input asp-for="Precio" class="form-control bg-dark text-white border-secondary" type="number" step="0.01" />
                         <span asp-validation-for="Precio" class="text-danger"></span>
                     </div>
 
                     <!-- Botones de acción -->
                     <div class="d-flex justify-content-between mt-4">
-                        <a asp-action="Index" class="btn btn-outline-secondary">Volver a la lista</a>
-                        <button type="submit" class="btn btn-warning">Guardar Cambios</button>
+                        <a asp-action="Index" class="btn btn-outline-light">Volver a la lista</a>
+                        <button type="submit" class="btn btn-warning fw-bold text-dark">Guardar Cambios</button>
                     </div>
                 </form>
             </div>

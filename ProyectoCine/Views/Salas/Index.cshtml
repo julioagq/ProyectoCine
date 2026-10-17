@@ -1,119 +1,70 @@
-@model IEnumerable<ProyectoCine.Models.Sala> // El modelo es una colección de salas
-
+@model IEnumerable<ProyectoCine.Models.Sala>
 @{
-    ViewData["Title"] = "Lista de Salas"; // Título de la página
+    ViewData["Title"] = "Lista de Salas";
+    var esAdmin = User?.Identity?.IsAuthenticated == true && (User.Identity.Name == "admin@cine.com" || User.IsInRole("Administrador") || User.IsInRole("Admin"));
 }
 
 <style>
-    /* Estilos generales para la página de salas */
     body.salas-page {
-        background-image: linear-gradient(rgba(0, 0, 0, 0.50), rgba(0, 0, 0, 0.65)), url('/images/salas.jpg'); /* Fondo con imagen */
+        background-image: linear-gradient( rgba(8, 12, 28, 0.55), rgba(8, 12, 28, 0.70) ), url('/images/peliculas.jpg');
         background-size: cover;
         background-position: center;
         background-repeat: no-repeat;
         background-attachment: fixed;
     }
 
-    .salas-contenido {
-        padding: 25px;
-        min-height: 80vh; /* Altura mínima para dar aire */
-    }
-
-    .salas-titulo {
-        color: white;
-        text-shadow: 2px 2px 6px rgba(0, 0, 0, 0.8); /* Sombra para mejor visibilidad */
-    }
-
-    .salas-tabla {
-        background-color: rgba(255, 255, 255, 0.95); /* Fondo blanco semitransparente */
-        border-radius: 12px;
-        overflow: hidden;
-    }
+        body.salas-page h2 {
+            color: #ffc107;
+            text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.9);
+            font-weight: bold;
+        }
 </style>
 
 <script>
-    // Agregar clase al body para aplicar estilos de fondo
     document.body.classList.add('salas-page');
 </script>
 
-<div class="salas-contenido">
-    <!-- Encabezado con título y botón para agregar nueva sala -->
+<div class="container mt-4 text-white">
     <div class="d-flex justify-content-between align-items-center mb-4">
-        <h1 class="display-6 fw-bold salas-titulo">Lista de Salas</h1>
+        <h2 class="text-warning fw-bold">Lista de Salas</h2>
 
-        <a asp-action="Create" class="btn btn-primary shadow-sm">
-            + Agregar Sala
-        </a>
+        <!-- Botón de Agregar visible SOLO para Administrador -->
+        @if (esAdmin)
+        {
+            <a asp-action="Create" class="btn btn-warning fw-bold text-dark">+ Agregar Sala</a>
+        }
     </div>
 
-    <!-- Tabla de salas -->
-    <div class="card salas-tabla shadow-sm border-0">
-        <div class="card-body p-0">
-            <table class="table table-hover table-striped align-middle mb-0">
-                <thead class="table-dark">
+    <div class="table-responsive shadow-lg">
+        <table class="table table-dark table-striped table-hover align-middle border border-secondary mb-0">
+            <thead class="table-dark border-bottom border-secondary">
+                <tr>
+                    <th class="py-3 px-3 text-warning">Nombre de la Sala</th>
+                    <th class="py-3 px-3 text-warning">Capacidad</th>
+                    <th class="py-3 px-3 text-warning">Cine Asignado</th>
+                    <th class="py-3 px-3 text-warning text-end">Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model)
+                {
                     <tr>
-                        <th>@Html.DisplayNameFor(model => model.Nombre)</th>
-                        <th>@Html.DisplayNameFor(model => model.Capacidad)</th>
-                        <th>@Html.DisplayNameFor(model => model.Cine)</th>
-                        <th class="text-end pe-4">Acciones</th>
+                        <td class="px-3 fw-bold text-white">@item.Nombre</td>
+                        <td class="px-3">@item.Capacidad asientos</td>
+                        <td class="px-3">@(item.Cine != null ? item.Cine.Nombre : "Sin cine asignado")</td>
+                        <td class="px-3 text-end">
+                            <div class="d-inline-flex gap-2">
+                                <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-sm btn-info text-white fw-bold">Detalles</a>
+                                @if (esAdmin)
+                                {
+                                    <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-sm btn-warning fw-bold text-dark">Editar</a>
+                                    <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-sm btn-danger fw-bold">Eliminar</a>
+                                }
+                            </div>
+                        </td>
                     </tr>
-                </thead>
-
-                <tbody>
-                    @if (Model != null && Model.Any())
-                    {
-                        @foreach (var item in Model)
-                        {
-                            <tr>
-                                <!-- Nombre de la sala -->
-                                <td class="fw-bold">
-                                    @Html.DisplayFor(modelItem => item.Nombre)
-                                </td>
-
-                                <!-- Capacidad con la palabra "asientos" -->
-                                <td>
-                                    @Html.DisplayFor(modelItem => item.Capacidad) asientos
-                                </td>
-
-                                <!-- Cine al que pertenece la sala -->
-                                <td>
-                                    @Html.DisplayFor(modelItem => item.Cine.Nombre)
-                                </td>
-
-                                <!-- Botones de acción -->
-                                <td class="text-end pe-3">
-                                    <a asp-action="Edit"
-                                       asp-route-id="@item.Id"
-                                       class="btn btn-warning btn-sm">
-                                        Editar
-                                    </a>
-
-                                    <a asp-action="Details"
-                                       asp-route-id="@item.Id"
-                                       class="btn btn-info btn-sm text-white">
-                                        Detalles
-                                    </a>
-
-                                    <a asp-action="Delete"
-                                       asp-route-id="@item.Id"
-                                       class="btn btn-danger btn-sm">
-                                        Eliminar
-                                    </a>
-                                </td>
-                            </tr>
-                        }
-                    }
-                    else
-                    {
-                        <!-- Mensaje cuando no hay salas registradas -->
-                        <tr>
-                            <td colspan="4" class="text-center text-muted py-4">
-                                No hay salas registradas.
-                            </td>
-                        </tr>
-                    }
-                </tbody>
-            </table>
-        </div>
+                }
+            </tbody>
+        </table>
     </div>
 </div>

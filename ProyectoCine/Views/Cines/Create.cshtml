@@ -1,68 +1,60 @@
-@model ProyectoCine.Models.Cine // El modelo que se usa en la vista es Cine
-
+@model ProyectoCine.Models.Cine
 @{
-    ViewData["Title"] = "Agregar Cine"; // Título de la página
+    ViewData["Title"] = "Agregar Cine";
 }
 
-<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" /> <!-- Estilos de Leaflet -->
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
 
-<div class="container mt-4">
+<div class="container mt-4 text-white">
     <div class="row justify-content-center">
         <div class="col-md-8">
-            <div class="card shadow-sm">
+            <div class="card shadow-lg bg-dark border-secondary">
                 <div class="card-header bg-primary text-white">
-                    <h4 class="mb-0">Agregar Nuevo Cine</h4> <!-- Encabezado del formulario -->
+                    <h4 class="mb-0 fw-bold">Agregar Nuevo Cine</h4>
                 </div>
-                <div class="card-body">
-                    <!-- Formulario para crear un cine -->
+                <div class="card-body bg-dark text-white p-4">
                     <form asp-action="Create" id="formCine">
                         <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
 
-                        <!-- Campo Nombre -->
                         <div class="mb-3">
-                            <label asp-for="Nombre" class="form-label fw-bold"></label>
-                            <input asp-for="Nombre" class="form-control" />
+                            <label asp-for="Nombre" class="form-label fw-bold text-warning"></label>
+                            <input asp-for="Nombre" class="form-control bg-dark text-white border-secondary" />
                             <span asp-validation-for="Nombre" class="text-danger"></span>
                         </div>
 
-                        <!-- Campo Ubicación -->
                         <div class="mb-3">
-                            <label asp-for="Ubicacion" class="form-label fw-bold"></label>
-                            <input asp-for="Ubicacion" class="form-control" />
+                            <label asp-for="Ubicacion" class="form-label fw-bold text-warning"></label>
+                            <input asp-for="Ubicacion" class="form-control bg-dark text-white border-secondary" />
                             <span asp-validation-for="Ubicacion" class="text-danger"></span>
                         </div>
 
-                        <!-- Campo Número de Salas -->
                         <div class="mb-3">
-                            <label asp-for="NumeroSalas" class="form-label fw-bold"></label>
-                            <input asp-for="NumeroSalas" class="form-control" type="number" />
+                            <label asp-for="NumeroSalas" class="form-label fw-bold text-warning"></label>
+                            <input asp-for="NumeroSalas" class="form-control bg-dark text-white border-secondary" type="number" />
                             <span asp-validation-for="NumeroSalas" class="text-danger"></span>
                         </div>
 
-                        <!-- Campos de coordenadas (latitud y longitud) -->
                         <div class="row">
                             <div class="col-md-6 mb-3">
-                                <label asp-for="Latitud" class="form-label fw-bold"></label>
-                                <input asp-for="Latitud" id="Latitud" class="form-control" type="number" step="any" placeholder="Haga clic en el mapa" required />
+                                <label asp-for="Latitud" class="form-label fw-bold text-warning"></label>
+                                <input asp-for="Latitud" id="Latitud" class="form-control bg-dark text-white border-secondary" type="number" step="any" placeholder="Haga clic en el mapa" required />
                                 <span asp-validation-for="Latitud" class="text-danger"></span>
                             </div>
                             <div class="col-md-6 mb-3">
-                                <label asp-for="Longitud" class="form-label fw-bold"></label>
-                                <input asp-for="Longitud" id="Longitud" class="form-control" type="number" step="any" placeholder="Haga clic en el mapa" required />
+                                <label asp-for="Longitud" class="form-label fw-bold text-warning"></label>
+                                <input asp-for="Longitud" id="Longitud" class="form-control bg-dark text-white border-secondary" type="number" step="any" placeholder="Haga clic en el mapa" required />
                                 <span asp-validation-for="Longitud" class="text-danger"></span>
                             </div>
                         </div>
 
-                        <!-- Mapa interactivo con Leaflet -->
                         <div class="mb-3">
-                            <label class="form-label fw-bold">Seleccione la Ubicación exacta en el Mapa (Haga clic para colocar el pin)</label>
-                            <div id="createMap" style="height: 350px; width: 100%;" class="rounded border"></div>
+                            <label class="form-label fw-bold text-warning">Seleccione la Ubicación exacta en el Mapa (Haga clic para colocar el pin)</label>
+                            <div id="createMap" style="height: 350px; width: 100%; border: 1px solid #6c757d;" class="rounded"></div>
                         </div>
 
-                        <!-- Botones de acción -->
-                        <div class="d-flex justify-content-between mt-4">
-                            <a asp-action="Index" class="btn btn-outline-secondary">Volver</a>
-                            <button type="submit" class="btn btn-success">Guardar Cine</button>
+                        <div class="d-flex justify-content-between align-items-center mt-4 pt-3 border-top border-secondary">
+                            <a asp-action="Index" class="btn btn-outline-light px-4">Volver</a>
+                            <button type="submit" class="btn btn-success fw-bold px-4">Guardar Cine</button>
                         </div>
                     </form>
                 </div>
@@ -75,17 +67,14 @@
     @{
         await Html.RenderPartialAsync("_ValidationScriptsPartial");
     }
-    <!-- Scripts de validación -->
-    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script> <!-- Script de Leaflet -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <script>
         document.addEventListener("DOMContentLoaded", function () {
             var latInput = document.getElementById("Latitud");
             var lngInput = document.getElementById("Longitud");
 
-            // Inicializa el mapa en San José, CR
             var map = L.map('createMap').setView([9.9333, -84.0833], 10);
 
-            // Capa base de OpenStreetMap
             L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
                 maxZoom: 19,
                 attribution: '&copy; OpenStreetMap'
@@ -93,22 +82,18 @@
 
             var marker = null;
 
-            // Evento al hacer clic en el mapa
             map.on('click', function (e) {
                 var lat = e.latlng.lat.toFixed(6);
                 var lng = e.latlng.lng.toFixed(6);
 
-                // Asigna valores a los inputs
                 latInput.value = lat;
                 lngInput.value = lng;
 
-                // Si ya hay marcador, lo mueve; si no, lo crea
                 if (marker) {
                     marker.setLatLng(e.latlng);
                 } else {
                     marker = L.marker(e.latlng, { draggable: true }).addTo(map);
 
-                    // Evento al arrastrar el marcador
                     marker.on('dragend', function (ev) {
                         var pos = marker.getLatLng();
                         latInput.value = pos.lat.toFixed(6);
@@ -117,13 +102,11 @@
                 }
             });
 
-            // Reemplaza comas por puntos al enviar el formulario
             document.getElementById("formCine").addEventListener("submit", function () {
                 if (latInput.value) latInput.value = latInput.value.replace(',', '.');
                 if (lngInput.value) lngInput.value = lngInput.value.replace(',', '.');
             });
 
-            // Ajusta el tamaño del mapa después de cargar
             setTimeout(function () {
                 map.invalidateSize();
             }, 200);

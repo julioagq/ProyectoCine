@@ -1,6 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
 // Permite usar anotaciones de esquema como [Column] y [ForeignKey]
 using System.ComponentModel.DataAnnotations.Schema;
+using Microsoft.AspNetCore.Http; // Necesario para IFormFile
 
 namespace ProyectoCine.Models
 {
@@ -33,12 +34,16 @@ namespace ProyectoCine.Models
         [Display(Name = "Imagen de la película")]
         public string? ImagenUrl { get; set; }
 
+        // Campo temporal para subir el archivo de imagen desde el formulario (no se mapea en la base de datos)
+        [NotMapped]
+        [Display(Name = "Archivo de Imagen")]
+        public IFormFile? ImagenArchivo { get; set; }
+
         // Campo Precio con validación de rango y formato
         [Range(0, 100000, ErrorMessage = "El precio debe ser un valor no negativo.")]
         [Column(TypeName = "decimal(10,2)")]
         [Display(Name = "Precio de la entrada")]
         public decimal Precio { get; set; }
-
 
         [Display(Name = "Cine")]
         public int CineId { get; set; }
