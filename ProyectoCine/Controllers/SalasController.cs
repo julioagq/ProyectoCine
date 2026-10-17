@@ -1,128 +1,138 @@
-using Microsoft.AspNetCore.Mvc; // Controladores y vistas
-using Microsoft.AspNetCore.Mvc.Rendering; // Para combos en formularios
-using Microsoft.EntityFrameworkCore; // Acceso a la base de datos
-using ProyectoCine.Data; // Contexto de datos
-using ProyectoCine.Models; // Modelos del proyecto
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.EntityFrameworkCore;
+using ProyectoCine.Data;
+using ProyectoCine.Models;
 
-public class SalasController : Controller
+namespace ProyectoCine.Controllers
 {
-    private readonly ApplicationDbContext _context;
-
-    // Constructor: recibe el contexto de la base de datos
-    public SalasController(ApplicationDbContext context)
+    public class SalasController : Controller
     {
-        _context = context;
-    }
+        private readonly ApplicationDbContext _context;
 
-    // Lista todas las salas con su cine
-    public async Task<IActionResult> Index()
-    {
-        var salas = _context.Salas.Include(s => s.Cine);
-        return View(await salas.ToListAsync());
-    }
-
-    // Muestra detalles de una sala por id
-    public async Task<IActionResult> Details(int? id)
-    {
-        if (id == null) return NotFound();
-
-        var sala = await _context.Salas
-            .Include(s => s.Cine)
-            .FirstOrDefaultAsync(s => s.Id == id);
-
-        if (sala == null) return NotFound();
-
-        return View(sala);
-    }
-
-    // Formulario para crear nueva sala
-    public IActionResult Create()
-    {
-        ViewData["CineId"] = new SelectList(_context.Cines, "Id", "Nombre"); // Combo de cines
-        return View();
-    }
-
-    // Guarda la nueva sala
-    [HttpPost]
-    [ValidateAntiForgeryToken]
-    public async Task<IActionResult> Create([Bind("Id,Nombre,Capacidad,CineId")] Sala sala)
-    {
-        if (ModelState.IsValid)
+        public SalasController(ApplicationDbContext context)
         {
-            _context.Salas.Add(sala);
-            await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
+            _context = context;
         }
 
-        ViewData["CineId"] = new SelectList(_context.Cines, "Id", "Nombre", sala.CineId);
-        return View(sala);
-    }
-
-    // Formulario para editar sala
-    public async Task<IActionResult> Edit(int? id)
-    {
-        if (id == null) return NotFound();
-
-        var sala = await _context.Salas.FindAsync(id);
-        if (sala == null) return NotFound();
-
-        ViewData["CineId"] = new SelectList(_context.Cines, "Id", "Nombre", sala.CineId);
-        return View(sala);
-    }
-
-    // Guarda cambios de la sala
-    [HttpPost]
-    [ValidateAntiForgeryToken]
-    public async Task<IActionResult> Edit(int id, [Bind("Id,Nombre,Capacidad,CineId")] Sala datosSala)
-    {
-        if (id != datosSala.Id) return NotFound();
-
-        if (ModelState.IsValid)
+        // GET: Salas
+        public async Task<IActionResult> Index()
         {
-            var sala = await _context.Salas.FindAsync(id);
+            var applicationDbContext = _context.Salas.Include(s => s.Cine);
+            return View(await applicationDbContext.ToListAsync());
+        }
+
+        // GET: Salas/Details/5
+        public async Task<IActionResult> Details(int? id)
+        {
+            if (id == null) return NotFound();
+
+            var sala = await _context.Salas
+                .Include(s => s.Cine)
+                .FirstOrDefaultAsync(m => m.Id == id);
             if (sala == null) return NotFound();
 
-            // Actualiza propiedades
-            sala.Nombre = datosSala.Nombre;
-            sala.Capacidad = datosSala.Capacidad;
-            sala.CineId = datosSala.CineId;
+            return View(sala);
+        }
 
-            await _context.SaveChangesAsync();
+        // GET: Salas/Create
+        public IActionResult Create()
+        {
+            ViewData["CineId"] = new SelectList(_context.Cines, "Id", "Nombre");
+            return View();
+        }
+
+        // POST: Salas/Create
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Create([Bind("Id,Nombre,Capacidad,CineId")] Sala sala)
+        {
+            if (ModelState.IsValid)
+            {
+                _context.Add(sala);
+                await _context.SaveChangesAsync();
+                return RedirectToAction(nameof(Index));
+            }
+            ViewData["CineId"] = new SelectList(_context.Cines, "Id", "Nombre", sala.CineId);
+            return View(sala);
+        }
+
+        // GET: Salas/Edit/5
+        public async Task<IActionResult> Edit(int? id)
+        {
+            if (id == null) return NotFound();
+
+            var sala = await _context.Salas.FindAsync(id);
+            if (sala == null) return NotFound();
+            ViewData["CineId"] = new SelectList(_context.Cines, "Id", "Nombre", sala.CineId);
+            return View(sala);
+        }
+
+        // POST: Salas/Edit/5
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Edit(int id, [Bind("Id,Nombre,Capacidad,CineId")] Sala sala)
+        {
+            if (id != sala.Id) return NotFound();
+
+            if (ModelState.IsValid)
+            {
+                try
+                {
+                    _context.Update(sala);
+                    await _context.SaveChangesAsync();
+                }
+                catch (DbUpdateConcurrencyException)
+                {
+                    if (!SalaExists(sala.Id)) return NotFound();
+                    else throw;
+                }
+                return RedirectToAction(nameof(Index));
+            }
+            ViewData["CineId"] = new SelectList(_context.Cines, "Id", "Nombre", sala.CineId);
+            return View(sala);
+        }
+
+        // GET: Salas/Delete/5
+        public async Task<IActionResult> Delete(int? id)
+        {
+            if (id == null) return NotFound();
+
+            var sala = await _context.Salas
+                .Include(s => s.Cine)
+                .FirstOrDefaultAsync(m => m.Id == id);
+            if (sala == null) return NotFound();
+
+            return View(sala);
+        }
+
+        // POST: Salas/Delete/5 [ELIMINACIÓN EN CASCADA PARA BORRAR FUNCIONES Y SALA]
+        [HttpPost, ActionName("Delete")]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> DeleteConfirmed(int id)
+        {
+            var sala = await _context.Salas.FindAsync(id);
+            if (sala != null)
+            {
+                // 1. Elimina primero las funciones asociadas a esta sala para evitar errores de llave foránea[cite: 8]
+                var funcionesAsociadas = _context.Funciones.Where(f => f.SalaId == id);
+                _context.Funciones.RemoveRange(funcionesAsociadas);
+
+                // 2. Elimina la sala exitosamente
+                _context.Salas.Remove(sala);
+                await _context.SaveChangesAsync();
+            }
+
             return RedirectToAction(nameof(Index));
         }
 
-        ViewData["CineId"] = new SelectList(_context.Cines, "Id", "Nombre", datosSala.CineId);
-        return View(datosSala);
-    }
-
-    // Confirmación para borrar sala
-    public async Task<IActionResult> Delete(int? id)
-    {
-        if (id == null) return NotFound();
-
-        var sala = await _context.Salas
-            .Include(s => s.Cine)
-            .FirstOrDefaultAsync(s => s.Id == id);
-
-        if (sala == null) return NotFound();
-
-        return View(sala);
-    }
-
-    // Elimina la sala
-    [HttpPost, ActionName("Delete")]
-    [ValidateAntiForgeryToken]
-    public async Task<IActionResult> DeleteConfirmed(int id)
-    {
-        var sala = await _context.Salas.FindAsync(id);
-        if (sala != null)
+        private bool SalaExists(int id)
         {
-            _context.Salas.Remove(sala);
-            await _context.SaveChangesAsync();
+            return _context.Salas.Any(e => e.Id == id);
         }
-
-        return RedirectToAction(nameof(Index));
     }
-
-    // Nota: manejo de imágenes eliminado, no se guardan imágenes por sala
 }

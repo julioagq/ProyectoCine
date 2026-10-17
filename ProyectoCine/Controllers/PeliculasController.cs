@@ -1,160 +1,208 @@
-using Microsoft.AspNetCore.Mvc; // Controladores y vistas
-using Microsoft.AspNetCore.Mvc.Rendering; // Para listas desplegables
-using Microsoft.EntityFrameworkCore; // Acceso a la base de datos
-using ProyectoCine.Data; // Contexto de datos
-using ProyectoCine.Models; // Modelos del proyecto
+using System;
+using System.IO;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.EntityFrameworkCore;
+using ProyectoCine.Data;
+using ProyectoCine.Models;
 
-public class PeliculasController : Controller
+namespace ProyectoCine.Controllers
 {
-    private readonly ApplicationDbContext _context;
-
-    public PeliculasController(ApplicationDbContext context) // Constructor recibe el contexto
+    public class PeliculasController : Controller
     {
-        _context = context;
-    }
+        private readonly ApplicationDbContext _context;
+        private readonly IWebHostEnvironment _hostEnvironment;
 
-    // Lista todas las películas con su cine
-    public async Task<IActionResult> Index()
-    {
-        var peliculas = _context.Peliculas.Include(p => p.Cine);
-        return View(await peliculas.ToListAsync());
-    }
-
-    // Muestra detalles de una película por id
-    public async Task<IActionResult> Details(int? id)
-    {
-        if (id == null) return NotFound();
-
-        var pelicula = await _context.Peliculas
-            .Include(p => p.Cine)
-            .FirstOrDefaultAsync(m => m.Id == id);
-
-        if (pelicula == null) return NotFound();
-
-        return View(pelicula);
-    }
-
-    // Formulario para crear nueva película
-    public IActionResult Create()
-    {
-        ViewData["CineId"] = new SelectList(_context.Cines, "Id", "Nombre"); // Combo de cines
-        return View();
-    }
-
-    // Guarda la nueva película
-    [HttpPost]
-    [ValidateAntiForgeryToken]
-    public async Task<IActionResult> Create([Bind("Id,Titulo,Genero,DuracionMinutos,Clasificacion,Sinopsis,ImagenUrl,Precio,CineId")] Pelicula pelicula)
-    {
-        if (ModelState.IsValid)
+        public PeliculasController(ApplicationDbContext context, IWebHostEnvironment hostEnvironment)
         {
-            _context.Add(pelicula);
-            await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
+            _context = context;
+            _hostEnvironment = hostEnvironment;
         }
 
-        ViewData["CineId"] = new SelectList(_context.Cines, "Id", "Nombre", pelicula.CineId);
-        return View(pelicula);
-    }
-
-    // Formulario para editar película
-    public async Task<IActionResult> Edit(int? id)
-    {
-        if (id == null) return NotFound();
-
-        var pelicula = await _context.Peliculas.FindAsync(id);
-        if (pelicula == null) return NotFound();
-
-        ViewData["CineId"] = new SelectList(_context.Cines, "Id", "Nombre", pelicula.CineId);
-        return View(pelicula);
-    }
-
-    // Guarda cambios de la edición
-    [HttpPost]
-    [ValidateAntiForgeryToken]
-    public async Task<IActionResult> Edit(int id, [Bind("Id,Titulo,Genero,DuracionMinutos,Clasificacion,Sinopsis,ImagenUrl,Precio,CineId")] Pelicula pelicula)
-    {
-        if (id != pelicula.Id) return NotFound();
-
-        if (ModelState.IsValid)
+        // GET: Peliculas
+        public async Task<IActionResult> Index()
         {
-            try
+            var applicationDbContext = _context.Peliculas.Include(p => p.Cine);
+            return View(await applicationDbContext.ToListAsync());
+        }
+
+        // GET: Peliculas/Details/5
+        public async Task<IActionResult> Details(int? id)
+        {
+            if (id == null) return NotFound();
+
+            var pelicula = await _context.Peliculas
+                .Include(p => p.Cine)
+                .FirstOrDefaultAsync(m => m.Id == id);
+
+            if (pelicula == null) return NotFound();
+
+            return View(pelicula);
+        }
+
+        // GET: Peliculas/Create
+        [Authorize]
+        public IActionResult Create()
+        {
+            ViewData["CineId"] = new SelectList(_context.Cines, "Id", "Nombre");
+            return View();
+        }
+
+        // POST: Peliculas/Create
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        [Authorize]
+        public async Task<IActionResult> Create([Bind("Id,Titulo,Genero,DuracionMinutos,Clasificacion,Sinopsis,ImagenUrl,ImagenArchivo,Precio,CineId")] Pelicula pelicula)
+        {
+            if (ModelState.IsValid)
             {
-                _context.Update(pelicula);
+                // Procesar la subida del archivo de imagen local
+                if (pelicula.ImagenArchivo != null && pelicula.ImagenArchivo.Length > 0)
+                {
+                    string wwwRootPath = _hostEnvironment.WebRootPath;
+                    string fileName = Guid.NewGuid().ToString() + Path.GetExtension(pelicula.ImagenArchivo.FileName);
+                    string peliculasPath = Path.Combine(wwwRootPath, "images", "peliculas");
+
+                    if (!Directory.Exists(peliculasPath))
+                    {
+                        Directory.CreateDirectory(peliculasPath);
+                    }
+
+                    string filePath = Path.Combine(peliculasPath, fileName);
+                    using (var fileStream = new FileStream(filePath, FileMode.Create))
+                    {
+                        await pelicula.ImagenArchivo.CopyToAsync(fileStream);
+                    }
+
+                    pelicula.ImagenUrl = "/images/peliculas/" + fileName;
+                }
+
+                _context.Add(pelicula);
                 await _context.SaveChangesAsync();
+                return RedirectToAction(nameof(Index));
             }
-            catch (DbUpdateConcurrencyException)
+            ViewData["CineId"] = new SelectList(_context.Cines, "Id", "Nombre", pelicula.CineId);
+            return View(pelicula);
+        }
+
+        // GET: Peliculas/Edit/5
+        [Authorize]
+        public async Task<IActionResult> Edit(int? id)
+        {
+            if (id == null) return NotFound();
+
+            var pelicula = await _context.Peliculas.FindAsync(id);
+            if (pelicula == null) return NotFound();
+
+            ViewData["CineId"] = new SelectList(_context.Cines, "Id", "Nombre", pelicula.CineId);
+            return View(pelicula);
+        }
+
+        // POST: Peliculas/Edit/5
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        [Authorize]
+        public async Task<IActionResult> Edit(int id, [Bind("Id,Titulo,Genero,DuracionMinutos,Clasificacion,Sinopsis,ImagenUrl,ImagenArchivo,Precio,CineId")] Pelicula pelicula)
+        {
+            if (id != pelicula.Id) return NotFound();
+
+            if (ModelState.IsValid)
             {
-                if (!PeliculaExists(pelicula.Id)) return NotFound();
-                else throw;
+                try
+                {
+                    // Procesar la subida de nueva imagen o conservar la anterior
+                    if (pelicula.ImagenArchivo != null && pelicula.ImagenArchivo.Length > 0)
+                    {
+                        string wwwRootPath = _hostEnvironment.WebRootPath;
+                        string fileName = Guid.NewGuid().ToString() + Path.GetExtension(pelicula.ImagenArchivo.FileName);
+                        string peliculasPath = Path.Combine(wwwRootPath, "images", "peliculas");
+
+                        if (!Directory.Exists(peliculasPath))
+                        {
+                            Directory.CreateDirectory(peliculasPath);
+                        }
+
+                        string filePath = Path.Combine(peliculasPath, fileName);
+                        using (var fileStream = new FileStream(filePath, FileMode.Create))
+                        {
+                            await pelicula.ImagenArchivo.CopyToAsync(fileStream);
+                        }
+
+                        pelicula.ImagenUrl = "/images/peliculas/" + fileName;
+                    }
+                    else
+                    {
+                        var peliculaDb = await _context.Peliculas.AsNoTracking().FirstOrDefaultAsync(p => p.Id == id);
+                        if (peliculaDb != null)
+                        {
+                            pelicula.ImagenUrl = peliculaDb.ImagenUrl;
+                        }
+                    }
+
+                    _context.Update(pelicula);
+                    await _context.SaveChangesAsync();
+                }
+                catch (DbUpdateConcurrencyException)
+                {
+                    if (!_context.Peliculas.Any(e => e.Id == pelicula.Id)) return NotFound();
+                    else throw;
+                }
+                return RedirectToAction(nameof(Index));
             }
+            ViewData["CineId"] = new SelectList(_context.Cines, "Id", "Nombre", pelicula.CineId);
+            return View(pelicula);
+        }
+
+        // GET: Peliculas/Delete/5 (Muestra primero la interfaz de confirmación)
+        [Authorize]
+        public async Task<IActionResult> Delete(int? id)
+        {
+            if (id == null) return NotFound();
+
+            var pelicula = await _context.Peliculas
+                .Include(p => p.Cine)
+                .FirstOrDefaultAsync(m => m.Id == id);
+
+            if (pelicula == null) return NotFound();
+
+            return View(pelicula);
+        }
+
+        // POST: Peliculas/Delete/5 (Ejecuta el borrado definitivo tras confirmar)
+        [HttpPost, ActionName("Delete")]
+        [ValidateAntiForgeryToken]
+        [Authorize]
+        public async Task<IActionResult> DeleteConfirmed(int id)
+        {
+            var pelicula = await _context.Peliculas.FindAsync(id);
+
+            if (pelicula != null)
+            {
+                try
+                {
+                    _context.Peliculas.Remove(pelicula);
+                    await _context.SaveChangesAsync();
+                }
+                catch (DbUpdateException)
+                {
+                    // Si la base de datos rechaza el borrado por tener registros vinculados, 
+                    // capturamos el error y se lo avisamos al usuario de forma limpia en la interfaz
+                    TempData["ErrorDelete"] = "No se puede eliminar esta película porque tiene registros o funciones asociadas en el sistema.";
+                    return RedirectToAction(nameof(Delete), new { id = id });
+                }
+            }
+
             return RedirectToAction(nameof(Index));
         }
 
-        ViewData["CineId"] = new SelectList(_context.Cines, "Id", "Nombre", pelicula.CineId);
-        return View(pelicula);
-    }
-
-    // Confirmación para borrar película
-    public async Task<IActionResult> Delete(int? id)
-    {
-        if (id == null) return NotFound();
-
-        var pelicula = await _context.Peliculas
-            .Include(p => p.Cine)
-            .FirstOrDefaultAsync(m => m.Id == id);
-
-        if (pelicula == null) return NotFound();
-
-        return View(pelicula);
-    }
-
-    // Elimina la película
-    [HttpPost, ActionName("Delete")]
-    [ValidateAntiForgeryToken]
-    public async Task<IActionResult> DeleteConfirmed(int id)
-    {
-        var pelicula = await _context.Peliculas.FindAsync(id);
-        if (pelicula != null) _context.Peliculas.Remove(pelicula);
-
-        await _context.SaveChangesAsync();
-        return RedirectToAction(nameof(Index));
-    }
-
-    // Revisa si existe una película por id
-    private bool PeliculaExists(int id)
-    {
-        return _context.Peliculas.Any(e => e.Id == id);
-    }
-
-    // Genera sinopsis automática con IA
-    [HttpGet]
-    public IActionResult GenerarSinopsisIA(string titulo, string genero)
-    {
-        if (string.IsNullOrEmpty(titulo))
+        // Acción auxiliar para generar sinopsis por IA
+        public async Task<IActionResult> GenerarSinopsisIA(string titulo, string genero)
         {
-            return Content("Por favor ingresa un título para generar la sinopsis.");
+            await Task.CompletedTask;
+            return Content($"Sinopsis generada automáticamente para la película {titulo} del género {genero}.");
         }
-
-        string sinopsisGenerada = $"'{titulo}' es una fascinante producción cinematográfica del género {genero ?? "drama"}. " +
-                                 $"Sigue una historia cautivadora llena de giros inesperados, momentos emotivos y un desarrollo de personajes excepcional " +
-                                 $"que mantendrá a la audiencia al borde de su asiento de principio a fin.";
-
-        return Content(sinopsisGenerada);
-    }
-
-    // Genera URL de imagen (poster) automática
-    [HttpGet]
-    public IActionResult GenerarImagenUrlIA(string titulo, string genero)
-    {
-        if (string.IsNullOrEmpty(titulo))
-        {
-            return Content("https://via.placeholder.com/500x750?text=Sin+Imagen");
-        }
-
-        string query = Uri.EscapeDataString($"{titulo} movie poster {genero}".Trim());
-        string imagenUrl = $"https://image.pollinations.ai/prompt/{query}?width=500&height=750&nologo=true";
-
-        return Content(imagenUrl);
     }
 }

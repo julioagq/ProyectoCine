@@ -1,18 +1,17 @@
-@model ProyectoCine.Models.Sala // El modelo que se recibe es una Sala
-
+@model ProyectoCine.Models.Sala
 @{
-    ViewData["Title"] = "Agregar Sala"; // Título de la página
+    ViewData["Title"] = "Agregar Sala";
 }
 
 <div class="row justify-content-center">
     <div class="col-md-6">
-        <div class="card shadow-sm mt-3">
+        <div class="card shadow-sm mt-3 bg-dark text-white border-secondary">
             <!-- Encabezado visual -->
             <div class="card-header bg-primary text-white">
-                <h4 class="mb-0">Agregar Nueva Sala</h4>
+                <h4 class="mb-0 fw-bold">Agregar Nueva Sala</h4>
             </div>
 
-            <div class="card-body">
+            <div class="card-body bg-dark text-white">
                 <!-- Formulario para crear una nueva sala -->
                 <form asp-action="Create" method="post">
 
@@ -23,9 +22,9 @@
                     <!-- Campo Nombre -->
                     <div class="mb-3">
                         <label asp-for="Nombre"
-                               class="form-label fw-bold"></label>
+                               class="form-label fw-bold text-warning"></label>
                         <input asp-for="Nombre"
-                               class="form-control"
+                               class="form-control bg-dark text-white border-secondary"
                                placeholder="Ej. Sala 1 - MacroXE" />
                         <span asp-validation-for="Nombre"
                               class="text-danger"></span>
@@ -34,9 +33,9 @@
                     <!-- Campo Capacidad -->
                     <div class="mb-3">
                         <label asp-for="Capacidad"
-                               class="form-label fw-bold"></label>
+                               class="form-label fw-bold text-warning"></label>
                         <input asp-for="Capacidad"
-                               class="form-control"
+                               class="form-control bg-dark text-white border-secondary"
                                type="number" />
                         <span asp-validation-for="Capacidad"
                               class="text-danger"></span>
@@ -45,11 +44,11 @@
                     <!-- Campo Cine asignado -->
                     <div class="mb-3">
                         <label asp-for="CineId"
-                               class="form-label fw-bold">
+                               class="form-label fw-bold text-warning">
                             Cine Asignado
                         </label>
                         <select asp-for="CineId"
-                                class="form-select"
+                                class="form-select bg-dark text-white border-secondary"
                                 asp-items="ViewBag.CineId">
                             <option value="">-- Seleccionar Cine --</option>
                         </select>
@@ -57,17 +56,15 @@
                               class="text-danger"></span>
                     </div>
 
-                    <!-- Campo de imagen eliminado: se usará un fondo general para la sección de Salas -->
-
                     <!-- Botones de acción -->
-                    <div class="d-flex justify-content-between mt-4">
+                    <div class="d-flex justify-content-between align-items-center mt-4 pt-3 border-top border-secondary">
                         <a asp-action="Index"
-                           class="btn btn-outline-secondary">
+                           class="btn btn-outline-light px-4">
                             Volver a la lista
                         </a>
 
                         <button type="submit"
-                                class="btn btn-success">
+                                class="btn btn-success fw-bold px-4">
                             Guardar Sala
                         </button>
                     </div>
@@ -78,7 +75,5 @@
 </div>
 
 @section Scripts {
-    @{
-        await Html.RenderPartialAsync("_ValidationScriptsPartial"); // Scripts de validación
-    }
+    <partial name="_ValidationScriptsPartial" />
 }

@@ -1,155 +1,154 @@
-@using System.Globalization // Para asegurar que las coordenadas se manejen con punto decimal
-@model ProyectoCine.Models.Cine // El modelo que se recibe es un Cine
+@model ProyectoCine.Models.Cine
 
 @{
-    ViewData["Title"] = "Editar Cine"; // Título de la página
+    ViewData["Title"] = "Editar Sede del Cine";
+    var esAdmin = User?.Identity?.IsAuthenticated == true &&
+                  User.Identity.Name != null &&
+                  User.Identity.Name.Trim().ToLower() == "admin@cine.com";
 }
 
-<!-- Estilos del Mapa Leaflet -->
-<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+<div class="container mt-4 text-white">
+    <h2 class="text-warning fw-bold mb-3">@(esAdmin ? "Editar Sede del Cine" : "Detalles de la Sede del Cine")</h2>
+    <hr class="border-secondary" />
 
-<div class="row justify-content-center">
-    <div class="col-md-8">
-        <div class="card shadow-sm mt-3">
-            <!-- Encabezado visual -->
-            <div class="card-header bg-warning text-dark">
-                <h4 class="mb-0 fw-bold">Editar Cine</h4>
+    <div class="card bg-dark border-secondary p-4 shadow-lg">
+        @if (esAdmin)
+        {
+            <form asp-action="Edit" method="post">
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                <input type="hidden" asp-for="Id" />
+
+                <div class="mb-3">
+                    <label asp-for="Nombre" class="form-label text-warning fw-bold"></label>
+                    <input asp-for="Nombre" class="form-control bg-dark text-white border-secondary" />
+                    <span asp-validation-for="Nombre" class="text-danger"></span>
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="Ubicacion" class="form-label text-warning fw-bold">Ubicación</label>
+                    <input asp-for="Ubicacion" class="form-control bg-dark text-white border-secondary" />
+                    <span asp-validation-for="Ubicacion" class="text-danger"></span>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label asp-for="Latitud" class="form-label text-warning fw-bold"></label>
+                        <!-- Usamos type="text" y valor convertido para evitar que el navegador bloquee el envío por formato decimal -->
+                        <input type="text" id="Latitud" name="Latitud" value="@Model.Latitud.ToString(System.Globalization.CultureInfo.InvariantCulture)" class="form-control bg-dark text-white border-secondary" />
+                        <span asp-validation-for="Latitud" class="text-danger"></span>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label asp-for="Longitud" class="form-label text-warning fw-bold"></label>
+                        <input type="text" id="Longitud" name="Longitud" value="@Model.Longitud.ToString(System.Globalization.CultureInfo.InvariantCulture)" class="form-control bg-dark text-white border-secondary" />
+                        <span asp-validation-for="Longitud" class="text-danger"></span>
+                    </div>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label text-warning fw-bold">Actualizar Ubicación en el Mapa (Arrastra el marcador)</label>
+                    <div id="map" style="height: 350px; width: 100%; border-radius: 6px; border: 1px solid #6c757d;"></div>
+                </div>
+
+                <div class="d-flex justify-content-between align-items-center mt-4 pt-3 border-top border-secondary">
+                    <a asp-action="Index" class="btn btn-secondary px-4 fw-bold">Volver a la lista</a>
+                    <button type="submit" class="btn btn-success fw-bold px-4">Guardar Cambios</button>
+                </div>
+            </form>
+        }
+        else
+        {
+            <dl class="row mb-0">
+                <dt class="col-sm-3 text-warning">Nombre</dt>
+                <dd class="col-sm-9 fw-bold fs-5 text-white">@Model.Nombre</dd>
+
+                <dt class="col-sm-3 text-warning mt-3">Ubicación</dt>
+                <dd class="col-sm-9 mt-3 text-white">@Model.Ubicacion</dd>
+
+                <dt class="col-sm-3 text-warning mt-3">Latitud</dt>
+                <dd class="col-sm-9 mt-3 text-white">@Model.Latitud</dd>
+
+                <dt class="col-sm-3 text-warning mt-3">Longitud</dt>
+                <dd class="col-sm-9 mt-3 text-white">@Model.Longitud</dd>
+            </dl>
+
+            <div class="mb-3 mt-4">
+                <label class="form-label text-warning fw-bold">Ubicación en el Mapa</label>
+                <div id="map" style="height: 350px; width: 100%; border-radius: 6px; border: 1px solid #6c757d;"></div>
             </div>
-            <div class="card-body">
-                <!-- Formulario para editar cine -->
-                <form asp-action="Edit" id="editForm">
-                    <!-- Validación de modelo -->
-                    <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
-                    <!-- Campo oculto con el Id -->
-                    <input type="hidden" asp-for="Id" />
 
-                    <!-- Campo Nombre -->
-                    <div class="mb-3">
-                        <label asp-for="Nombre" class="form-label fw-bold"></label>
-                        <input asp-for="Nombre" class="form-control" />
-                        <span asp-validation-for="Nombre" class="text-danger"></span>
-                    </div>
-
-                    <!-- Campo Ubicación -->
-                    <div class="mb-3">
-                        <label asp-for="Ubicacion" class="form-label fw-bold"></label>
-                        <input asp-for="Ubicacion" class="form-control" />
-                        <span asp-validation-for="Ubicacion" class="text-danger"></span>
-                    </div>
-
-                    <!-- Campo Número de Salas -->
-                    <div class="mb-3">
-                        <label asp-for="NumeroSalas" class="form-label fw-bold"></label>
-                        <input asp-for="NumeroSalas" class="form-control" type="number" />
-                        <span asp-validation-for="NumeroSalas" class="text-danger"></span>
-                    </div>
-
-                    <!-- Campos de coordenadas -->
-                    <div class="row">
-                        <div class="col-md-6 mb-3">
-                            <label asp-for="Latitud" class="form-label fw-bold"></label>
-                            <input asp-for="Latitud" id="Latitud" value="@Model.Latitud.ToString(CultureInfo.InvariantCulture)" class="form-control" type="number" step="any" />
-                            <span asp-validation-for="Latitud" class="text-danger"></span>
-                        </div>
-                        <div class="col-md-6 mb-3">
-                            <label asp-for="Longitud" class="form-label fw-bold"></label>
-                            <input asp-for="Longitud" id="Longitud" value="@Model.Longitud.ToString(CultureInfo.InvariantCulture)" class="form-control" type="number" step="any" />
-                            <span asp-validation-for="Longitud" class="text-danger"></span>
-                        </div>
-                    </div>
-
-                    <!-- Contenedor del mapa interactivo -->
-                    <div class="mb-3">
-                        <label class="form-label fw-bold">Ubicación en el Mapa (Arrastra el marcador o haz clic)</label>
-                        <div id="editMap" style="height: 320px; width: 100%;" class="rounded border"></div>
-                    </div>
-
-                    <!-- Botones de acción -->
-                    <div class="d-flex justify-content-between mt-4">
-                        <a asp-action="Index" class="btn btn-outline-secondary">Volver</a>
-                        <button type="submit" class="btn btn-warning fw-bold">Guardar Cambios</button>
-                    </div>
-                </form>
+            <div class="mt-4 pt-3 border-top border-secondary">
+                <a asp-action="Index" class="btn btn-secondary px-4 fw-bold">Volver a la lista</a>
             </div>
-        </div>
+        }
     </div>
 </div>
 
 @section Scripts {
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");} <!-- Scripts de validación -->
-
-    <!-- Script de Leaflet -->
+    <!-- Omitimos el script de validación parcial del cliente para que no bloquee los campos decimales del mapa -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
     <script>
         document.addEventListener("DOMContentLoaded", function () {
-            var latInput = document.getElementById("Latitud");
-            var lngInput = document.getElementById("Longitud");
+            var latInput = document.getElementById('Latitud');
+            var lngInput = document.getElementById('Longitud');
 
-            // Obtener valores iniciales desde los inputs (con seguridad contra comas)
-            var lat = parseFloat(latInput.value.replace(',', '.')) || 9.9333;
-            var lng = parseFloat(lngInput.value.replace(',', '.')) || -84.0833;
+            var defaultLat = 9.9281;
+            var defaultLng = -84.0907;
 
-            // Inicializar mapa centrado en coordenadas actuales
-            var map = L.map('editMap').setView([lat, lng], 14);
+            var currentLat = latInput ? (parseFloat(latInput.value.replace(',', '.')) || defaultLat) : defaultLat;
+            var currentLng = lngInput ? (parseFloat(lngInput.value.replace(',', '.')) || defaultLng) : defaultLng;
 
-            // Capa base de OpenStreetMap
-            L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            var map = L.map('map').setView([currentLat, currentLng], 15);
+
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
                 maxZoom: 19,
-                attribution: '&copy; OpenStreetMap'
+                attribution: '© OpenStreetMap'
             }).addTo(map);
 
-            // Crear marcador arrastrable
-            var marker = L.marker([lat, lng], { draggable: true }).addTo(map);
+            var marker = L.marker([currentLat, currentLng], {
+                draggable: @(esAdmin ? "true" : "false")
+            }).addTo(map);
 
-            // Función para actualizar inputs con posición del marcador
-            function actualizarInputs(latLng) {
-                latInput.value = latLng.lat.toFixed(6);
-                lngInput.value = latLng.lng.toFixed(6);
+            marker.bindPopup("<b>@Model.Nombre</b><br />@Model.Ubicacion").openPopup();
+
+            @if (esAdmin)
+            {
+                    <text>
+                        map.on('click', function(e) {
+                            var lat = e.latlng.lat.toFixed(5);
+                            var lng = e.latlng.lng.toFixed(5);
+                            marker.setLatLng([lat, lng]);
+                            if (latInput) latInput.value = lat;
+                            if (lngInput) lngInput.value = lng;
+                        });
+
+                        marker.on('dragend', function(e) {
+                            var position = marker.getLatLng();
+                            var lat = position.lat.toFixed(5);
+                            var lng = position.lng.toFixed(5);
+                            if (latInput) latInput.value = lat;
+                            if (lngInput) lngInput.value = lng;
+                        });
+
+                        if (latInput) {
+                            latInput.addEventListener('input', function() {
+                                var val = parseFloat(latInput.value.replace(',', '.'));
+                                if (!isNaN(val)) {
+                                    marker.setLatLng([val, marker.getLatLng().lng]);
+                                }
+                            });
+                        }
+                        if (lngInput) {
+                            lngInput.addEventListener('input', function() {
+                                var val = parseFloat(lngInput.value.replace(',', '.'));
+                                if (!isNaN(val)) {
+                                    marker.setLatLng([marker.getLatLng().lat, val]);
+                                }
+                            });
+                        }
+                    </text>
             }
-
-            // Evento al arrastrar el marcador
-            marker.on('dragend', function (e) {
-                var position = marker.getLatLng();
-                map.panTo(position);
-                actualizarInputs(position);
-            });
-
-            // Evento al hacer clic en el mapa
-            map.on('click', function (e) {
-                marker.setLatLng(e.latlng);
-                actualizarInputs(e.latlng);
-            });
-
-            // Actualizar mapa si se escriben coordenadas manualmente en Latitud
-            latInput.addEventListener('input', function () {
-                var nuevaLat = parseFloat(latInput.value.replace(',', '.'));
-                var currentLng = marker.getLatLng().lng;
-                if (!isNaN(nuevaLat)) {
-                    marker.setLatLng([nuevaLat, currentLng]);
-                    map.panTo([nuevaLat, currentLng]);
-                }
-            });
-
-            // Actualizar mapa si se escriben coordenadas manualmente en Longitud
-            lngInput.addEventListener('input', function () {
-                var nuevaLat = marker.getLatLng().lat;
-                var nuevaLng = parseFloat(lngInput.value.replace(',', '.'));
-                if (!isNaN(nuevaLng)) {
-                    marker.setLatLng([nuevaLat, nuevaLng]);
-                    map.panTo([nuevaLat, nuevaLng]);
-                }
-            });
-
-            // Seguridad: reemplazar comas por puntos al enviar formulario
-            document.getElementById("editForm").addEventListener("submit", function () {
-                latInput.value = latInput.value.replace(',', '.');
-                lngInput.value = lngInput.value.replace(',', '.');
-            });
-
-            // Ajustar tamaño del mapa después de cargar
-            setTimeout(function () {
-                map.invalidateSize();
-            }, 200);
         });
     </script>
 }
