@@ -1,0 +1,74 @@
+- generic [active] [ref=e1]:
+  - complementary [ref=e2]:
+    - link "🎬 Cine UH" [ref=e3] [cursor=pointer]:
+      - /url: /
+    - navigation [ref=e4]:
+      - generic [ref=e5]: Principal
+      - link "🏠 Inicio" [ref=e6] [cursor=pointer]:
+        - /url: /
+      - link "🎞️ Películas" [ref=e7] [cursor=pointer]:
+        - /url: /Peliculas
+      - link "🕒 Funciones" [ref=e8] [cursor=pointer]:
+        - /url: /Funciones
+      - link "🏢 Cines" [ref=e9] [cursor=pointer]:
+        - /url: /Cines
+      - link "🪑 Salas" [ref=e10] [cursor=pointer]:
+        - /url: /Salas
+      - generic [ref=e11]: Cuenta
+      - link "🔑 Ingresar" [ref=e12] [cursor=pointer]:
+        - /url: /Home/Login
+      - link "📝 Registro" [ref=e13] [cursor=pointer]:
+        - /url: /Home/Register
+      - generic [ref=e14]: Información
+      - link "🔒 Políticas y privacidad" [ref=e15] [cursor=pointer]:
+        - /url: /Home/Privacy
+  - generic [ref=e16]:
+    - banner [ref=e17]:
+      - generic [ref=e18]: Lista de Funciones
+      - generic [ref=e20]:
+        - link "Ingresar" [ref=e21] [cursor=pointer]:
+          - /url: /Home/Login
+        - link "Registro" [ref=e22] [cursor=pointer]:
+          - /url: /Home/Register
+    - main [ref=e24]:
+      - generic [ref=e25]:
+        - heading "Lista de Funciones" [level=2] [ref=e27]
+        - paragraph [ref=e28]: Aquí se muestran las funciones de todas las películas disponibles.
+        - table [ref=e30]:
+          - rowgroup [ref=e31]:
+            - row "Película Sala / Cine Fecha y Hora Precio Acciones" [ref=e32]:
+              - columnheader "Película" [ref=e33]
+              - columnheader "Sala / Cine" [ref=e34]
+              - columnheader "Fecha y Hora" [ref=e35]
+              - columnheader "Precio" [ref=e36]
+              - columnheader "Acciones" [ref=e37]
+          - rowgroup [ref=e38]:
+            - row "Harry Potter y la piedra filosofal Sala 1 (Multiplaza) 26/10/2026 01:10 p. m. $3000,00 Detalles" [ref=e39]:
+              - cell "Harry Potter y la piedra filosofal" [ref=e40]
+              - cell "Sala 1 (Multiplaza)" [ref=e41]
+              - cell "26/10/2026 01:10 p. m." [ref=e42]
+              - cell "$3000,00" [ref=e43]
+              - cell "Detalles" [ref=e44]:
+                - link "Detalles" [ref=e46] [cursor=pointer]:
+                  - /url: /Funciones/Details/2
+            - row "Mario bros Sala 1 (Multiplaza) 28/10/2026 01:10 p. m. $3000,00 Detalles" [ref=e47]:
+              - cell "Mario bros" [ref=e48]
+              - cell "Sala 1 (Multiplaza)" [ref=e49]
+              - cell "28/10/2026 01:10 p. m." [ref=e50]
+              - cell "$3000,00" [ref=e51]
+              - cell "Detalles" [ref=e52]:
+                - link "Detalles" [ref=e54] [cursor=pointer]:
+                  - /url: /Funciones/Details/3
+            - row "Harry Potter y la piedra filosofal Sala 1 (Multiplaza) 27/10/2026 01:10 p. m. $3000,00 Detalles" [ref=e55]:
+              - cell "Harry Potter y la piedra filosofal" [ref=e56]
+              - cell "Sala 1 (Multiplaza)" [ref=e57]
+              - cell "27/10/2026 01:10 p. m." [ref=e58]
+              - cell "$3000,00" [ref=e59]
+              - cell "Detalles" [ref=e60]:
+                - link "Detalles" [ref=e62] [cursor=pointer]:
+                  - /url: /Funciones/Details/4
+    - contentinfo [ref=e63]:
+      - generic [ref=e64]:
+        - text: © 2026 - Cine UH |
+        - link "Políticas y privacidad" [ref=e65] [cursor=pointer]:
+          - /url: /Home/Privacy

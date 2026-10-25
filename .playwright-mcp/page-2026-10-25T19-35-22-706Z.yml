@@ -1,0 +1,55 @@
+- generic [active] [ref=e1]:
+  - complementary [ref=e2]:
+    - link "🎬 Cine UH" [ref=e3] [cursor=pointer]:
+      - /url: /
+    - navigation [ref=e4]:
+      - generic [ref=e5]: Principal
+      - link "🏠 Inicio" [ref=e6] [cursor=pointer]:
+        - /url: /
+      - link "🎞️ Películas" [ref=e7] [cursor=pointer]:
+        - /url: /Peliculas
+      - link "🕒 Funciones" [ref=e8] [cursor=pointer]:
+        - /url: /Funciones
+      - link "🏢 Cines" [ref=e9] [cursor=pointer]:
+        - /url: /Cines
+      - link "🪑 Salas" [ref=e10] [cursor=pointer]:
+        - /url: /Salas
+      - generic [ref=e11]: Cuenta
+      - link "🔑 Ingresar" [ref=e12] [cursor=pointer]:
+        - /url: /Home/Login
+      - link "📝 Registro" [ref=e13] [cursor=pointer]:
+        - /url: /Home/Register
+      - generic [ref=e14]: Información
+      - link "🔒 Políticas y privacidad" [ref=e15] [cursor=pointer]:
+        - /url: /Home/Privacy
+  - generic [ref=e16]:
+    - banner [ref=e17]:
+      - generic [ref=e18]: Iniciar Sesión
+      - generic [ref=e20]:
+        - link "Ingresar" [ref=e21] [cursor=pointer]:
+          - /url: /Home/Login
+        - link "Registro" [ref=e22] [cursor=pointer]:
+          - /url: /Home/Register
+    - main [ref=e24]:
+      - generic [ref=e27]:
+        - heading "Iniciar Sesión" [level=2] [ref=e28]
+        - alert [ref=e29]:
+          - text: ¡Registro exitoso! Por favor, inicia sesión con tus datos.
+          - button "Close" [ref=e30] [cursor=pointer]
+        - generic [ref=e31]:
+          - generic [ref=e32]:
+            - generic [ref=e33]: Correo Electrónico
+            - textbox "correo@ejemplo.com" [ref=e34]
+          - generic [ref=e35]:
+            - generic [ref=e36]: Contraseña
+            - textbox "••••••••" [ref=e37]
+          - button "Ingresar" [ref=e42] [cursor=pointer]
+        - generic [ref=e43]:
+          - paragraph [ref=e44]: ¿No tienes una cuenta?
+          - link "Regístrate aquí" [ref=e45] [cursor=pointer]:
+            - /url: /Home/Register
+    - contentinfo [ref=e46]:
+      - generic [ref=e47]:
+        - text: © 2026 - Cine UH |
+        - link "Políticas y privacidad" [ref=e48] [cursor=pointer]:
+          - /url: /Home/Privacy

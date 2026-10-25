@@ -6,10 +6,7 @@
 
 <style>
     body.funciones-page {
-        background-image: linear-gradient(
-            rgba(8, 12, 28, 0.55), 
-            rgba(8, 12, 28, 0.70)
-        ), url('/images/peliculas.jpg');
+        background-image: linear-gradient( rgba(8, 12, 28, 0.55), rgba(8, 12, 28, 0.70) ), url('/images/peliculas.jpg');
         background-size: cover;
         background-position: center;
         background-repeat: no-repeat;
@@ -28,14 +25,15 @@
 </script>
 
 <div class="container mt-4 text-white">
-    <div class="d-flex justify-content-between align-items-center mb-4">
+    <div class="d-flex justify-content-between align-items-center mb-2">
         <h2 class="text-warning fw-bold">Lista de Funciones</h2>
-        
+
         @if (esAdmin)
         {
             <a asp-action="Create" class="btn btn-warning fw-bold text-dark">+ Agregar Función</a>
         }
     </div>
+    <p class="text-light mb-4">Aquí se muestran las funciones de todas las películas disponibles.</p>
 
     <div class="table-responsive shadow-lg">
         <table class="table table-dark table-striped table-hover align-middle border border-secondary mb-0">
@@ -58,12 +56,22 @@
                         <td class="px-3 text-warning fw-bold">$@item.Precio.ToString("0.00")</td>
                         <td class="px-3 text-end">
                             <div class="d-inline-flex gap-2 align-items-center">
+                                <!-- 👉 Botón Comprar corregido enviando exclusivamente el id de la función -->
+                                @if (User?.Identity?.IsAuthenticated == true && !esAdmin)
+                                {
+                                    <a class="btn btn-sm btn-success fw-bold"
+                                       asp-controller="Funciones"
+                                       asp-action="Details"
+                                       asp-route-id="@item.Id">
+                                        Seleccionar Butaca
+                                    </a>
+                                }
+
                                 <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-sm btn-info text-white fw-bold">Detalles</a>
+
                                 @if (esAdmin)
                                 {
                                     <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-sm btn-warning fw-bold text-dark">Editar</a>
-                                    
-                                    <!-- Pantalla de confirmación Delete.cshtml -->
                                     <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-sm btn-danger fw-bold">Eliminar</a>
                                 }
                             </div>

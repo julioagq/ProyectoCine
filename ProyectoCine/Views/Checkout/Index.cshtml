@@ -1,0 +1,120 @@
+﻿@model ProyectoCine.Models.CarritoViewModel
+@{
+    ViewData["Title"] = "Finalizar Compra (Checkout)";
+}
+
+<div class="container my-4 text-white">
+    <h2 class="text-warning mb-4">💳 Finalizar Compra (Checkout)</h2>
+
+    @if (TempData["ErrorPago"] != null)
+    {
+        <div class="alert alert-danger" role="alert">
+            @TempData["ErrorPago"]
+        </div>
+    }
+
+    <form asp-controller="Checkout" asp-action="ProcesarPago" method="post">
+        <div class="row">
+            <!-- Resumen de tu Carrito (Columna Izquierda) -->
+            <div class="col-md-7 mb-4">
+                <div class="card bg-dark border-secondary p-3 shadow-lg">
+                    <h4 class="text-warning mb-3">Resumen de tu Carrito</h4>
+                    
+                    <table class="table table-dark table-striped align-middle mb-3">
+                        <thead>
+                            <tr>
+                                <th>Película</th>
+                                <th>Butaca</th>
+                                <th>Precio</th>
+                                <th>Cant.</th>
+                                <th>Subtotal</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @if (Model.Items != null && Model.Items.Any())
+                            {
+                                @foreach (var item in Model.Items)
+                                {
+                                    <tr>
+                                        <td>@item.TituloPelicula</td>
+                                        <td>@(string.IsNullOrWhiteSpace(item.ButacaCodigo) ? "N/A" : item.ButacaCodigo)</td>
+                                        <td>$@item.Precio.ToString("0.00")</td>
+                                        <td>@item.Cantidad</td>
+                                        <td>$@item.SubTotal.ToString("0.00")</td>
+                                    </tr>
+                                }
+                            }
+                        </tbody>
+                    </table>
+
+                    <div class="text-end pt-2 border-top border-secondary">
+                        <h4 class="text-success fw-bold mb-0">Total a Pagar: $@Model.TotalGeneral.ToString("0.00")</h4>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Datos de Pago (Columna Derecha) -->
+            <div class="col-md-5">
+                <div class="card bg-dark border-secondary p-4 shadow-lg">
+                    <h4 class="text-warning mb-3">Datos de Pago</h4>
+                    
+                    <div class="mb-3">
+                        <label class="form-label text-muted small">Nombre en la tarjeta</label>
+                        <input type="text" name="NombreTarjeta" class="form-control bg-secondary text-white border-0" placeholder="Ej. Mario Barquero" required />
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label text-muted small">Número de tarjeta</label>
+                        <input type="text" id="NumeroTarjeta" name="NumeroTarjeta" class="form-control bg-secondary text-white border-0" placeholder="4000 1234 5678 9010" maxlength="16" pattern="\d{16}" title="Debe ingresar 16 dígitos numéricos" oninput="this.value = this.value.replace(/[^0-9]/g, '');" required />
+                    </div>
+
+                    <div class="row">
+                        <div class="col-6 mb-3">
+                            <label class="form-label text-muted small">Expiración</label>
+                            <!-- Validación estricta para MM/AA -->
+                            <input type="text" id="Expiracion" name="Expiracion" class="form-control bg-secondary text-white border-0" placeholder="MM/AA" maxlength="5" pattern="(0[1-9]|1[0-2])\/[0-9]{2}" title="Formato requerido: MM/AA (ej. 12/28)" oninput="formatearExpiracion(this)" required />
+                        </div>
+                        <div class="col-6 mb-3">
+                            <label class="form-label text-muted small">CVV</label>
+                            <input type="password" name="Cvv" class="form-control bg-secondary text-white border-0" placeholder="123" maxlength="4" pattern="\d{3,4}" title="3 o 4 dígitos numéricos" oninput="this.value = this.value.replace(/[^0-9]/g, '');" required />
+                        </div>
+                    </div>
+
+                    <!-- Botones de navegación y acción -->
+                    <div class="d-flex justify-content-between align-items-center mt-3 pt-3 border-top border-secondary">
+                        <a asp-controller="Carrito" asp-action="Index" class="btn btn-outline-light fw-bold">
+                            ⬅ Volver al Carrito
+                        </a>
+                        <button type="submit" class="btn btn-success fw-bold px-4">
+                            Pagar $@Model.TotalGeneral.ToString("0.00")
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+
+<!-- Script para dar formato automático y validar MM/AA -->
+@section Scripts {
+    <script>
+        function formatearExpiracion(input) {
+            // Eliminar cualquier caracter que no sea número
+            let val = input.value.replace(/\D/g, '');
+
+            // Validar que el mes no sea mayor a 12 si ya escribió 2 dígitos
+            if (val.length >= 2) {
+                let mes = parseInt(val.substring(0, 2), 10);
+                if (mes > 12) val = '12' + val.substring(2);
+                if (mes === 0) val = '01' + val.substring(2);
+            }
+
+            // Insertar automáticamente la barra '/' después de 2 dígitos
+            if (val.length > 2) {
+                input.value = val.substring(0, 2) + '/' + val.substring(2, 4);
+            } else {
+                input.value = val;
+            }
+        }
+    </script>
+}

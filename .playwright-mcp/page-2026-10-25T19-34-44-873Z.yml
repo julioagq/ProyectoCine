@@ -1,0 +1,52 @@
+- generic [active] [ref=e1]:
+  - complementary [ref=e2]:
+    - link "🎬 Cine UH" [ref=e3] [cursor=pointer]:
+      - /url: /
+    - navigation [ref=e4]:
+      - generic [ref=e5]: Principal
+      - link "🏠 Inicio" [ref=e6] [cursor=pointer]:
+        - /url: /
+      - link "🎞️ Películas" [ref=e7] [cursor=pointer]:
+        - /url: /Peliculas
+      - link "🕒 Funciones" [ref=e8] [cursor=pointer]:
+        - /url: /Funciones
+      - link "🏢 Cines" [ref=e9] [cursor=pointer]:
+        - /url: /Cines
+      - link "🪑 Salas" [ref=e10] [cursor=pointer]:
+        - /url: /Salas
+      - generic [ref=e11]: Cuenta
+      - link "🔑 Ingresar" [ref=e12] [cursor=pointer]:
+        - /url: /Home/Login
+      - link "📝 Registro" [ref=e13] [cursor=pointer]:
+        - /url: /Home/Register
+      - generic [ref=e14]: Información
+      - link "🔒 Políticas y privacidad" [ref=e15] [cursor=pointer]:
+        - /url: /Home/Privacy
+  - generic [ref=e16]:
+    - banner [ref=e17]:
+      - generic [ref=e18]: Detalles de la Función
+      - generic [ref=e20]:
+        - link "Ingresar" [ref=e21] [cursor=pointer]:
+          - /url: /Home/Login
+        - link "Registro" [ref=e22] [cursor=pointer]:
+          - /url: /Home/Register
+    - main [ref=e24]:
+      - generic [ref=e28]:
+        - heading "Detalles de la Función" [level=4] [ref=e30]
+        - generic [ref=e31]:
+          - generic [ref=e32]:
+            - term [ref=e33]: Película
+            - definition [ref=e34]: Harry Potter y la piedra filosofal
+            - term [ref=e35]: Sala y Cine
+            - definition [ref=e36]: Sala 1 (Multiplaza)
+            - term [ref=e37]: Fecha y Hora
+            - definition [ref=e38]: 26/10/2026 01:10 p. m.
+            - term [ref=e39]: Precio
+            - definition [ref=e40]: ₡3 000,00
+          - link "Volver" [ref=e42] [cursor=pointer]:
+            - /url: /Funciones
+    - contentinfo [ref=e43]:
+      - generic [ref=e44]:
+        - text: © 2026 - Cine UH |
+        - link "Políticas y privacidad" [ref=e45] [cursor=pointer]:
+          - /url: /Home/Privacy

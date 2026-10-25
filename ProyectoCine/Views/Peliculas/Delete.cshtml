@@ -47,7 +47,8 @@
             <dd class="col-sm-9">@Model.Clasificacion</dd>
         </dl>
 
-        <form asp-action="Delete" class="mt-3">
+        <form asp-action="Delete" method="post" class="mt-3">
+            @Html.AntiForgeryToken()
             <input type="hidden" asp-for="Id" />
             <input type="submit" value="Sí, Eliminar Definitivamente" class="btn btn-danger" />
             <a asp-action="Index" class="btn btn-secondary ms-2">Cancelar y Volver</a>

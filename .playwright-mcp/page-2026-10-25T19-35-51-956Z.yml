@@ -1,0 +1,83 @@
+- generic [active] [ref=e1]:
+  - complementary [ref=e2]:
+    - link "🎬 Cine UH" [ref=e3] [cursor=pointer]:
+      - /url: /
+    - navigation [ref=e4]:
+      - generic [ref=e5]: Principal
+      - link "🏠 Inicio" [ref=e6] [cursor=pointer]:
+        - /url: /
+      - link "🎞️ Películas" [ref=e7] [cursor=pointer]:
+        - /url: /Peliculas
+      - link "🛒 Carrito de Compras" [ref=e8] [cursor=pointer]:
+        - /url: /Carrito
+      - link "🕒 Funciones" [ref=e9] [cursor=pointer]:
+        - /url: /Funciones
+      - link "🏢 Cines" [ref=e10] [cursor=pointer]:
+        - /url: /Cines
+      - link "🪑 Salas" [ref=e11] [cursor=pointer]:
+        - /url: /Salas
+      - generic [ref=e12]: Cuenta
+      - link "👤 Mi perfil y reservas" [ref=e13] [cursor=pointer]:
+        - /url: /Perfil
+      - generic [ref=e14]: Información
+      - link "🔒 Políticas y privacidad" [ref=e15] [cursor=pointer]:
+        - /url: /Home/Privacy
+  - generic [ref=e16]:
+    - banner [ref=e17]:
+      - generic [ref=e18]: Lista de Funciones
+      - generic [ref=e20]:
+        - generic [ref=e21]:
+          - text: Bienvenido,
+          - strong [ref=e22]: comprador.ui.test@cine.com
+        - button "Cerrar sesión" [ref=e24] [cursor=pointer]
+    - main [ref=e26]:
+      - generic [ref=e27]:
+        - heading "Lista de Funciones" [level=2] [ref=e29]
+        - paragraph [ref=e30]: Aquí se muestran las funciones de todas las películas disponibles.
+        - table [ref=e32]:
+          - rowgroup [ref=e33]:
+            - row "Película Sala / Cine Fecha y Hora Precio Acciones" [ref=e34]:
+              - columnheader "Película" [ref=e35]
+              - columnheader "Sala / Cine" [ref=e36]
+              - columnheader "Fecha y Hora" [ref=e37]
+              - columnheader "Precio" [ref=e38]
+              - columnheader "Acciones" [ref=e39]
+          - rowgroup [ref=e40]:
+            - row "Harry Potter y la piedra filosofal Sala 1 (Multiplaza) 26/10/2026 01:10 p. m. $3000,00 Seleccionar Butaca Detalles" [ref=e41]:
+              - cell "Harry Potter y la piedra filosofal" [ref=e42]
+              - cell "Sala 1 (Multiplaza)" [ref=e43]
+              - cell "26/10/2026 01:10 p. m." [ref=e44]
+              - cell "$3000,00" [ref=e45]
+              - cell "Seleccionar Butaca Detalles" [ref=e46]:
+                - generic [ref=e47]:
+                  - link "Seleccionar Butaca" [ref=e48] [cursor=pointer]:
+                    - /url: /Funciones/Details/2
+                  - link "Detalles" [ref=e49] [cursor=pointer]:
+                    - /url: /Funciones/Details/2
+            - row "Mario bros Sala 1 (Multiplaza) 28/10/2026 01:10 p. m. $3000,00 Seleccionar Butaca Detalles" [ref=e50]:
+              - cell "Mario bros" [ref=e51]
+              - cell "Sala 1 (Multiplaza)" [ref=e52]
+              - cell "28/10/2026 01:10 p. m." [ref=e53]
+              - cell "$3000,00" [ref=e54]
+              - cell "Seleccionar Butaca Detalles" [ref=e55]:
+                - generic [ref=e56]:
+                  - link "Seleccionar Butaca" [ref=e57] [cursor=pointer]:
+                    - /url: /Funciones/Details/3
+                  - link "Detalles" [ref=e58] [cursor=pointer]:
+                    - /url: /Funciones/Details/3
+            - row "Harry Potter y la piedra filosofal Sala 1 (Multiplaza) 27/10/2026 01:10 p. m. $3000,00 Seleccionar Butaca Detalles" [ref=e59]:
+              - cell "Harry Potter y la piedra filosofal" [ref=e60]
+              - cell "Sala 1 (Multiplaza)" [ref=e61]
+              - cell "27/10/2026 01:10 p. m." [ref=e62]
+              - cell "$3000,00" [ref=e63]
+              - cell "Seleccionar Butaca Detalles" [ref=e64]:
+                - generic [ref=e65]:
+                  - link "Seleccionar Butaca" [ref=e66] [cursor=pointer]:
+                    - /url: /Funciones/Details/4
+                  - link "Detalles" [ref=e67] [cursor=pointer]:
+                    - /url: /Funciones/Details/4
+    - contentinfo [ref=e68]:
+      - generic [ref=e69]:
+        - text: © 2026 - Cine UH |
+        - link "Políticas y privacidad" [ref=e70] [cursor=pointer]:
+          - /url: /Home/Privacy

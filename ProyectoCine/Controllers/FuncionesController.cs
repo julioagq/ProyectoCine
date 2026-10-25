@@ -1,11 +1,14 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc; // Controladores y vistas
 using Microsoft.AspNetCore.Mvc.Rendering; // Para combos en formularios
 using Microsoft.EntityFrameworkCore; // Acceso a la base de datos
 using ProyectoCine.Data; // Contexto de datos
 using ProyectoCine.Models; // Modelos del proyecto
+using System.Security.Claims;
 
 namespace ProyectoCine.Controllers
 {
+    [Authorize(Roles = "Administrador")]
     public class FuncionesController : Controller
     {
         private readonly ApplicationDbContext _context;
@@ -16,6 +19,7 @@ namespace ProyectoCine.Controllers
         }
 
         // Lista todas las funciones con su película, sala y cine
+        [AllowAnonymous]
         public async Task<IActionResult> Index()
         {
             var funciones = _context.Funciones
@@ -27,6 +31,7 @@ namespace ProyectoCine.Controllers
         }
 
         // Muestra detalles de una función por id
+        [AllowAnonymous]
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null) return NotFound();
@@ -39,6 +44,31 @@ namespace ProyectoCine.Controllers
 
             if (funcion == null) return NotFound();
 
+            var ahora = DateTime.UtcNow;
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+            var reservasVigentes = await _context.ReservasButacas
+                .Where(r => r.FuncionId == funcion.Id &&
+                            (r.Estado == "Pagada" || (r.Estado == "Pendiente" && r.ExpiraEn > ahora)))
+                .Select(r => new { r.ButacaCodigo, r.UserId })
+                .ToListAsync();
+
+            var butacasPropias = reservasVigentes
+                .Where(r => !string.IsNullOrEmpty(userId) && r.UserId == userId)
+                .Select(r => r.ButacaCodigo)
+                .Distinct()
+                .OrderBy(b => b)
+                .ToList();
+
+            var butacasOtros = reservasVigentes
+                .Where(r => string.IsNullOrEmpty(userId) || r.UserId != userId)
+                .Select(r => r.ButacaCodigo)
+                .Distinct()
+                .OrderBy(b => b)
+                .ToList();
+
+            ViewBag.ButacasReservadasPropias = butacasPropias;
+            ViewBag.ButacasReservadasOtros = butacasOtros;
             return View(funcion);
         }
 
@@ -124,10 +154,12 @@ namespace ProyectoCine.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var funcion = await _context.Funciones.FindAsync(id);
-            if (funcion != null) _context.Funciones.Remove(funcion);
+            var affectedRows = await _context.Funciones
+                .Where(f => f.Id == id)
+                .ExecuteDeleteAsync();
 
-            await _context.SaveChangesAsync();
+            if (affectedRows == 0) return NotFound();
+
             return RedirectToAction(nameof(Index));
         }
 

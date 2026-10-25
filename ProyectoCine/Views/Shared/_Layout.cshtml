@@ -1,4 +1,10 @@
-﻿<!DOCTYPE html><html lang="es"><head>
+﻿@using Microsoft.AspNetCore.Identity
+@inject SignInManager<IdentityUser> SignInManager
+@inject UserManager<IdentityUser> UserManager
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>@ViewData["Title"] - Cine UH</title>
@@ -154,11 +160,13 @@
                 gap: 10px;
             }
         }
-    </style></head>
+    </style>
+</head>
 @{
     var bodyClass = ViewData["BodyClass"] as string ?? string.Empty;
     var esAdmin = User?.Identity?.IsAuthenticated == true && (User.Identity.Name == "admin@cine.com" || User.IsInRole("Administrador") || User.IsInRole("Admin"));
-}<body class="@bodyClass">
+}
+<body class="@bodyClass">
 
     <!-- MENU LATERAL -->
     <aside class="cine-sidebar">
@@ -177,6 +185,14 @@
                 🎞️ Películas
             </a>
 
+            <!-- 👉 El Carrito solo se muestra si el usuario está autenticado Y NO es Administrador -->
+            @if (User?.Identity?.IsAuthenticated == true && !esAdmin)
+            {
+                <a class="nav-link" asp-controller="Carrito" asp-action="Index">
+                    🛒 Carrito de Compras
+                </a>
+            }
+
             <a class="nav-link" asp-controller="Funciones" asp-action="Index">
                 🕒 Funciones
             </a>
@@ -190,6 +206,15 @@
                 🪑 Salas
             </a>
 
+            <!-- 👉 SECCIÓN EXCLUSIVA PARA EL ADMINISTRADOR -->
+            @if (esAdmin)
+            {
+                <div class="menu-title">Administración</div>
+                <a class="nav-link text-warning" asp-controller="Admin" asp-action="Index">
+                    👥 Usuarios y Roles
+                </a>
+            }
+
             <div class="menu-title">Cuenta</div>
 
             @if (User?.Identity?.IsAuthenticated != true)
@@ -200,6 +225,12 @@
 
                 <a class="nav-link" asp-controller="Home" asp-action="Register">
                     📝 Registro
+                </a>
+            }
+            else
+            {
+                <a class="nav-link" asp-controller="Perfil" asp-action="Index">
+                    👤 Perfil y reservas
                 </a>
             }
 
@@ -277,4 +308,6 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
 
-    @await RenderSectionAsync("Scripts", required: false)</body></html>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

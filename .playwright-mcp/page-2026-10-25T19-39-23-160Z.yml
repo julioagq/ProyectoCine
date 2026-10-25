@@ -1,0 +1,73 @@
+- generic [active] [ref=e1]:
+  - complementary [ref=e2]:
+    - link "🎬 Cine UH" [ref=e3] [cursor=pointer]:
+      - /url: /
+    - navigation [ref=e4]:
+      - generic [ref=e5]: Principal
+      - link "🏠 Inicio" [ref=e6] [cursor=pointer]:
+        - /url: /
+      - link "🎞️ Películas" [ref=e7] [cursor=pointer]:
+        - /url: /Peliculas
+      - link "🛒 Carrito de Compras" [ref=e8] [cursor=pointer]:
+        - /url: /Carrito
+      - link "🕒 Funciones" [ref=e9] [cursor=pointer]:
+        - /url: /Funciones
+      - link "🏢 Cines" [ref=e10] [cursor=pointer]:
+        - /url: /Cines
+      - link "🪑 Salas" [ref=e11] [cursor=pointer]:
+        - /url: /Salas
+      - generic [ref=e12]: Cuenta
+      - link "👤 Mi perfil y reservas" [ref=e13] [cursor=pointer]:
+        - /url: /Perfil
+      - generic [ref=e14]: Información
+      - link "🔒 Políticas y privacidad" [ref=e15] [cursor=pointer]:
+        - /url: /Home/Privacy
+  - generic [ref=e16]:
+    - banner [ref=e17]:
+      - generic [ref=e18]: Carrito de Compras
+      - generic [ref=e20]:
+        - generic [ref=e21]:
+          - text: Bienvenido,
+          - strong [ref=e22]: comprador.ui.test@cine.com
+        - button "Cerrar sesión" [ref=e24] [cursor=pointer]
+    - main [ref=e26]:
+      - generic [ref=e27]:
+        - heading "🛒 Carrito de Compras" [level=2] [ref=e28]
+        - generic [ref=e29]: 1 butaca(s) agregadas al carrito por 10 minutos.
+        - generic [ref=e30]:
+          - table [ref=e31]:
+            - rowgroup [ref=e32]:
+              - row "Película Butaca Precio U. Cantidad Subtotal Acciones" [ref=e33]:
+                - columnheader "Película" [ref=e34]
+                - columnheader "Butaca" [ref=e35]
+                - columnheader "Precio U." [ref=e36]
+                - columnheader "Cantidad" [ref=e37]
+                - columnheader "Subtotal" [ref=e38]
+                - columnheader "Acciones" [ref=e39]
+            - rowgroup [ref=e40]:
+              - row "Harry Potter y la piedra filosofal A1 $3000,00 1 $3000,00 Eliminar" [ref=e41]:
+                - cell "Harry Potter y la piedra filosofal" [ref=e42]
+                - cell "A1" [ref=e43]
+                - cell "$3000,00" [ref=e44]
+                - cell "1" [ref=e45]:
+                  - generic [ref=e46]: "1"
+                - cell "$3000,00" [ref=e47]
+                - cell "Eliminar" [ref=e48]:
+                  - button "Eliminar" [ref=e50] [cursor=pointer]
+              - row "Harry Potter y la piedra filosofal A2 $3000,00 1 $3000,00 Eliminar" [ref=e51]:
+                - cell "Harry Potter y la piedra filosofal" [ref=e52]
+                - cell "A2" [ref=e53]
+                - cell "$3000,00" [ref=e54]
+                - cell "1" [ref=e55]:
+                  - generic [ref=e56]: "1"
+                - cell "$3000,00" [ref=e57]
+                - cell "Eliminar" [ref=e58]:
+                  - button "Eliminar" [ref=e60] [cursor=pointer]
+          - generic [ref=e61]:
+            - 'heading "Total General: $6000,00" [level=3] [ref=e62]'
+            - button "💳 Proceder al Pago" [ref=e64] [cursor=pointer]
+    - contentinfo [ref=e65]:
+      - generic [ref=e66]:
+        - text: © 2026 - Cine UH |
+        - link "Políticas y privacidad" [ref=e67] [cursor=pointer]:
+          - /url: /Home/Privacy

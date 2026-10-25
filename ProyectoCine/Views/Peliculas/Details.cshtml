@@ -1,13 +1,11 @@
-@model ProyectoCine.Models.Pelicula // El modelo que se recibe es una Película
+@model ProyectoCine.Models.Pelicula
 
 @{
-    ViewData["Title"] = "Detalles de la Película"; // Título de la página
+    ViewData["Title"] = "Details";
 }
-@{
-    // Se aplica una clase al body para estilos de fondo
-    ViewData["BodyClass"] = "peliculas-page";
 
-    // Si la película tiene imagen, se usa como fondo; si no, se usa una imagen por defecto
+@{
+    ViewData["BodyClass"] = "peliculas-page";
     var bgUrl = string.IsNullOrEmpty(Model?.ImagenUrl) ? "/images/peliculas.jpg" : Model.ImagenUrl;
 }
 
@@ -16,43 +14,94 @@
      style="background-image: url('@bgUrl'); background-size: cover; background-position: center; background-repeat: no-repeat;">
     <div class="row justify-content-center">
         <div class="col-md-9">
-            <div class="card details-card shadow-sm mt-3">
+            <div class="card details-card shadow-sm mt-3 bg-dark text-white border-secondary">
                 <!-- Encabezado -->
-                <div class="card-header bg-transparent">
-                    <h4 class="mb-0">Detalles de la Película</h4>
+                <div class="card-header bg-transparent border-secondary">
+                    <h4 class="mb-0 text-warning fw-bold">Detalles de la Película</h4>
                 </div>
                 <div class="card-body">
                     <!-- Lista de detalles de la película -->
                     <dl class="row mb-0">
-                        <dt class="col-sm-4 text-muted">@Html.DisplayNameFor(model => model.Titulo)</dt>
-                        <dd class="col-sm-8 fw-bold fs-5 text-dark">@Html.DisplayFor(model => model.Titulo)</dd>
+                        <dt class="col-sm-4 text-warning">@Html.DisplayNameFor(model => model.Titulo)</dt>
+                        <dd class="col-sm-8 fw-bold fs-5 text-white">@Html.DisplayFor(model => model.Titulo)</dd>
 
-                        <dt class="col-sm-4 text-muted">@Html.DisplayNameFor(model => model.Genero)</dt>
-                        <dd class="col-sm-8">@Html.DisplayFor(model => model.Genero)</dd>
+                        <dt class="col-sm-4 text-warning">@Html.DisplayNameFor(model => model.Genero)</dt>
+                        <dd class="col-sm-8 text-light">@Html.DisplayFor(model => model.Genero)</dd>
 
-                        <dt class="col-sm-4 text-muted">@Html.DisplayNameFor(model => model.DuracionMinutos)</dt>
-                        <dd class="col-sm-8">@Html.DisplayFor(model => model.DuracionMinutos) min</dd>
+                        <dt class="col-sm-4 text-warning">@Html.DisplayNameFor(model => model.DuracionMinutos)</dt>
+                        <dd class="col-sm-8 text-light">@Html.DisplayFor(model => model.DuracionMinutos) min</dd>
 
-                        <dt class="col-sm-4 text-muted">@Html.DisplayNameFor(model => model.Clasificacion)</dt>
+                        <dt class="col-sm-4 text-warning">@Html.DisplayNameFor(model => model.Clasificacion)</dt>
                         <dd class="col-sm-8">
-                            <!-- Clasificación mostrada como badge -->
                             <span class="badge bg-secondary">@Html.DisplayFor(model => model.Clasificacion)</span>
                         </dd>
 
-                        <dt class="col-sm-4 text-muted">@Html.DisplayNameFor(model => model.Cine)</dt>
-                        <dd class="col-sm-8 fw-semibold text-primary">@Html.DisplayFor(model => model.Cine.Nombre)</dd>
+                        <dt class="col-sm-4 text-warning">@Html.DisplayNameFor(model => model.Cine)</dt>
+                        <dd class="col-sm-8 fw-semibold text-info">@Html.DisplayFor(model => model.Cine.Nombre)</dd>
 
-                        <dt class="col-sm-4 text-muted">@Html.DisplayNameFor(model => model.Sinopsis)</dt>
-                        <dd class="col-sm-8 text-secondary">
-                            <!-- Si no hay sinopsis, se muestra un mensaje alternativo -->
+                        <dt class="col-sm-4 text-warning">@Html.DisplayNameFor(model => model.Sinopsis)</dt>
+                        <dd class="col-sm-8 text-light">
                             @(string.IsNullOrEmpty(Model.Sinopsis) ? "Sin sinopsis disponible." : Model.Sinopsis)
                         </dd>
                     </dl>
 
+                    @{
+                        var funcionesDisponibles = ViewBag.FuncionesDisponibles as List<ProyectoCine.Models.Funcion> ?? new List<ProyectoCine.Models.Funcion>();
+                    }
+
+                    <div class="mt-4 pt-3 border-top border-secondary">
+                        <h5 class="text-warning fw-bold mb-3">Funciones disponibles para esta película</h5>
+
+                        @if (funcionesDisponibles.Any())
+                        {
+                            <div class="table-responsive">
+                                <table class="table table-dark table-striped table-hover align-middle border border-secondary mb-0">
+                                    <thead>
+                                        <tr>
+                                            <th>Fecha y Hora</th>
+                                            <th>Sala / Cine</th>
+                                            <th>Precio</th>
+                                            <th class="text-end">Acción</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @foreach (var funcion in funcionesDisponibles)
+                                        {
+                                            <tr>
+                                                <td>@funcion.FechaHora.ToString("dd/MM/yyyy hh:mm tt")</td>
+                                                <td>@funcion.Sala?.Nombre (@funcion.Sala?.Cine?.Nombre)</td>
+                                                <td class="text-warning fw-bold">₡@funcion.Precio.ToString("N2")</td>
+                                                <td class="text-end">
+                                                    <a asp-controller="Funciones" asp-action="Details" asp-route-id="@funcion.Id" class="btn btn-sm btn-success fw-bold">Seleccionar Butaca</a>
+                                                </td>
+                                            </tr>
+                                        }
+                                    </tbody>
+                                </table>
+                            </div>
+                        }
+                        else
+                        {
+                            <div class="alert alert-info mb-0">No hay funciones disponibles para esta película en este momento.</div>
+                        }
+                    </div>
+
                     <!-- Botones de acción -->
-                    <div class="d-flex justify-content-between mt-4 pt-3 border-top">
-                        <a asp-action="Index" class="btn btn-outline-secondary">Volver</a>
-                        <a asp-action="Edit" asp-route-id="@Model?.Id" class="btn btn-warning">Editar</a>
+                    <div class="d-flex justify-content-between mt-4 pt-3 border-top border-secondary">
+                        <a asp-action="Index" class="btn btn-outline-light">Volver</a>
+
+                        @if (User.IsInRole("Administrador"))
+                        {
+                            <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-warning fw-bold">Editar</a>
+                        }
+                        else if (User.IsInRole("Comprador"))
+                        {
+                            <form asp-controller="Carrito" asp-action="AgregarPelicula" method="post" class="m-0">
+                                <input type="hidden" name="peliculaId" value="@Model.Id" />
+                                @Html.AntiForgeryToken()
+                                <button type="submit" class="btn btn-warning fw-bold">Comprar</button>
+                            </form>
+                        }
                     </div>
                 </div>
             </div>

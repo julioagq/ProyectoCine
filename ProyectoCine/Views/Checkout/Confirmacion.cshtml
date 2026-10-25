@@ -1,0 +1,48 @@
+﻿@model ProyectoCine.Models.Orden
+@{
+    ViewData["Title"] = "Orden Confirmada";
+}
+
+<div class="container my-5 text-white">
+    <div class="card bg-dark border-success p-4 mx-auto" style="max-width: 700px;">
+        <div class="text-center mb-4">
+            <h1 class="text-success">🎉 ¡Compra Exitosa!</h1>
+            <p class="text-muted">Tu pago ha sido aprobado por la pasarela y tu orden ha sido registrada.</p>
+        </div>
+
+        <div class="mb-3">
+            <p><strong>N° de Orden:</strong> #@Model.Id</p>
+            <p><strong>ID de Transacción (Pasarela):</strong> @Model.TransaccionId</p>
+            <p><strong>Fecha:</strong> @Model.FechaOrden.ToString("g")</p>
+        </div>
+
+        <h4 class="text-warning mb-3">Detalle de Películas Compradas</h4>
+        <table class="table table-dark table-bordered">
+            <thead>
+                <tr>
+                    <th>Película</th>
+                    <th>Precio U.</th>
+                    <th>Cantidad</th>
+                    <th>Subtotal</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var detalle in Model.Detalles)
+                {
+                    <tr>
+                        <td>@detalle.TituloPelicula</td>
+                        <td>$@detalle.PrecioUnitario.ToString("0.00")</td>
+                        <td>@detalle.Cantidad</td>
+                        <td>$@detalle.SubTotal.ToString("0.00")</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+
+        <h3 class="text-end text-success mt-3">Total Pagado: $@Model.TotalGeneral.ToString("0.00")</h3>
+
+        <div class="text-center mt-4">
+            <a asp-controller="Home" asp-action="Index" class="btn btn-warning px-4 fw-bold">Volver al Inicio</a>
+        </div>
+    </div>
+</div>

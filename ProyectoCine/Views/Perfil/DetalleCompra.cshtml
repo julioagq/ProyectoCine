@@ -1,0 +1,79 @@
+@model ProyectoCine.Models.Orden
+
+@{
+    ViewData["Title"] = "Detalle de compra";
+    var esAdmin = User.IsInRole("Administrador") || User.IsInRole("Admin");
+}
+
+<div class="container-fluid">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h2 class="mb-0">🧾 Detalle de compra #@Model.Id</h2>
+        <div class="d-flex gap-2">
+            @if (esAdmin)
+            {
+                <a asp-controller="Perfil" asp-action="ConfirmarEliminarCompra" asp-route-id="@Model.Id" class="btn btn-danger fw-bold">Eliminar compra</a>
+            }
+            <a asp-controller="Perfil" asp-action="Index" class="btn btn-outline-secondary">Volver al perfil</a>
+        </div>
+    </div>
+
+    <div class="card shadow-sm border-0 mb-4">
+        <div class="card-header bg-dark text-white fw-bold">Información de la orden</div>
+        <div class="card-body">
+            <p class="mb-2"><strong>Fecha:</strong> @Model.FechaOrden.ToString("dd/MM/yyyy HH:mm")</p>
+            <p class="mb-2"><strong>Transacción:</strong> @Model.TransaccionId</p>
+            <p class="mb-0"><strong>Total:</strong> ₡@Model.TotalGeneral.ToString("N2")</p>
+        </div>
+    </div>
+
+    <div class="card shadow-sm border-0">
+        <div class="card-header bg-primary text-white fw-bold">Butacas y productos comprados</div>
+        <div class="card-body p-0">
+            @if (Model.Detalles != null && Model.Detalles.Any())
+            {
+                <div class="table-responsive">
+                    <table class="table table-hover mb-0">
+                        <thead>
+                            <tr>
+                                <th>Película</th>
+                                <th>Butaca</th>
+                                <th>Precio U.</th>
+                                <th>Cantidad</th>
+                                <th>Subtotal</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var detalle in Model.Detalles)
+                            {
+                                var butaca = "N/A";
+                                var marca = "(Butaca ";
+                                var indice = detalle.TituloPelicula.IndexOf(marca, StringComparison.OrdinalIgnoreCase);
+                                if (indice >= 0)
+                                {
+                                    var inicio = indice + marca.Length;
+                                    var fin = detalle.TituloPelicula.IndexOf(')', inicio);
+                                    if (fin > inicio)
+                                    {
+                                        butaca = detalle.TituloPelicula.Substring(inicio, fin - inicio);
+                                    }
+                                }
+
+                                <tr>
+                                    <td>@detalle.TituloPelicula</td>
+                                    <td>@butaca</td>
+                                    <td>₡@detalle.PrecioUnitario.ToString("N2")</td>
+                                    <td>@detalle.Cantidad</td>
+                                    <td>₡@detalle.SubTotal.ToString("N2")</td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            }
+            else
+            {
+                <div class="p-3 text-muted">Esta orden no tiene detalles registrados.</div>
+            }
+        </div>
+    </div>
+</div>

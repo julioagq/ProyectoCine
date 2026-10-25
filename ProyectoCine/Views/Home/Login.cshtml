@@ -4,10 +4,9 @@
 
 <div class="row justify-content-center mt-5">
     <div class="col-md-5">
-        <div class="card shadow-sm p-4 border-0">
-            <h2 class="text-center mb-4 fw-bold">Iniciar Sesión</h2>
+        <div class="card shadow-sm p-4 bg-dark text-white border-secondary">
+            <h2 class="text-center mb-4 fw-bold text-warning">Iniciar Sesión</h2>
 
-            <!-- 👇 MUESTRA EL MENSAJE DE ÉXITO TRAS REGISTRARSE -->
             @if (TempData["MensajeExito"] != null)
             {
                 <div class="alert alert-success alert-dismissible fade show" role="alert">
@@ -16,18 +15,26 @@
                 </div>
             }
 
-            <form asp-controller="Home" asp-action="Login" method="post">
+            <form asp-controller="Home" asp-action="Login" method="post" id="loginForm">
                 @Html.AntiForgeryToken()
 
                 <div class="mb-3">
-                    <label class="form-label fw-semibold">Correo Electrónico</label>
-                    <input type="email" name="email" class="form-control" placeholder="correo@ejemplo.com" required />
+                    <label class="form-label fw-semibold text-warning">Correo Electrónico</label>
+                    <input type="email" name="email" class="form-control bg-dark text-white border-secondary" placeholder="correo@ejemplo.com" required />
                 </div>
 
                 <div class="mb-3">
-                    <label class="form-label fw-semibold">Contraseña</label>
-                    <input type="password" name="password" class="form-control" placeholder="••••••••" required />
+                    <label class="form-label fw-semibold text-warning">Contraseña</label>
+                    <input type="password" name="password" class="form-control bg-dark text-white border-secondary" placeholder="••••••••" required />
                 </div>
+
+                <!-- Contenedor exacto para Cloudflare Turnstile -->
+                <div class="mb-3 d-flex justify-content-center">
+                    <div class="cf-turnstile" data-sitekey="@ViewBag.TurnstileSiteKey"></div>
+                </div>
+
+                <!-- Campo oculto para enviar el token -->
+                <input type="hidden" name="captchaToken" id="captchaToken" />
 
                 <button type="submit" class="btn btn-primary w-100 py-2 fw-bold">Ingresar</button>
             </form>
@@ -41,8 +48,19 @@
 
             <div class="mt-4 text-center">
                 <p class="text-muted mb-1">¿No tienes una cuenta?</p>
-                <a asp-controller="Home" asp-action="Register" class="text-decoration-none fw-semibold">Regístrate aquí</a>
+                <a asp-controller="Home" asp-action="Register" class="text-decoration-none fw-semibold text-warning">Regístrate aquí</a>
             </div>
         </div>
     </div>
 </div>
+
+<!-- Script oficial de Cloudflare Turnstile -->
+<script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
+<script>
+    document.getElementById('loginForm').addEventListener('submit', function (e) {
+        var tokenInput = document.querySelector('[name="cf-turnstile-response"]');
+        if (tokenInput) {
+            document.getElementById('captchaToken').value = tokenInput.value;
+        }
+    });
+</script>
