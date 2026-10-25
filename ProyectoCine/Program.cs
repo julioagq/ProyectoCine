@@ -1,43 +1,95 @@
-using System.Globalization;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Localization;
 using Microsoft.EntityFrameworkCore;
 using ProyectoCine.Data;
+using ProyectoCine.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Configuración de cultura invariante para los decimales (puntos y comas)
-var supportedCultures = new[] { new CultureInfo("en-US") };
-builder.Services.Configure<RequestLocalizationOptions>(options =>
-{
-    options.DefaultRequestCulture = new RequestCulture("en-US");
-    options.SupportedCultures = supportedCultures;
-    options.SupportedUICultures = supportedCultures;
-});
-
-// Configuración de la base de datos
+// Configuración del DbContext con SQL Server
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
-builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = false)
+// Configuración de Identity con Roles
+builder.Services.AddDefaultIdentity<IdentityUser>(options =>
+    {
+        options.SignIn.RequireConfirmedAccount = false;
+        options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(10);
+        options.Lockout.MaxFailedAccessAttempts = 5;
+        options.Lockout.AllowedForNewUsers = true;
+    })
+    .AddRoles<IdentityRole>()
     .AddEntityFrameworkStores<ApplicationDbContext>();
 
 builder.Services.AddControllersWithViews();
+builder.Services.AddControllers();
+builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddSwaggerGen();
+
+builder.Services.AddScoped<IPasarelaPago, PasarelaPagoSimulada>();
+builder.Services.AddHttpClient();
+
+// Configuración de cookies y redirecciones
+builder.Services.ConfigureApplicationCookie(options =>
+{
+    options.LoginPath = "/Home/Login";
+    options.AccessDeniedPath = "/Home/AccessDenied";
+    options.Cookie.HttpOnly = true;
+    options.Cookie.SecurePolicy = CookieSecurePolicy.SameAsRequest;
+    options.Cookie.SameSite = SameSiteMode.Lax;
+});
 
 var app = builder.Build();
 
-app.UseRequestLocalization(new RequestLocalizationOptions
+using (var scope = app.Services.CreateScope())
 {
-    DefaultRequestCulture = new RequestCulture("en-US"),
-    SupportedCultures = supportedCultures,
-    SupportedUICultures = supportedCultures
-});
+    var services = scope.ServiceProvider;
+    try
+    {
+        var dbContext = services.GetRequiredService<ApplicationDbContext>();
+        await dbContext.Database.MigrateAsync();
 
-// Configure the HTTP request pipeline.
+        await dbContext.Database.ExecuteSqlRawAsync(@"
+            IF OBJECT_ID(N'[dbo].[CarritoItems]', N'U') IS NOT NULL
+            AND COL_LENGTH(N'[dbo].[CarritoItems]', N'FuncionId') IS NULL
+            BEGIN
+                ALTER TABLE [dbo].[CarritoItems] ADD [FuncionId] int NULL;
+            END");
+
+        var roleManager = services.GetRequiredService<RoleManager<IdentityRole>>();
+        var userManager = services.GetRequiredService<UserManager<IdentityUser>>();
+
+        string[] roles = { "Administrador", "Comprador" };
+        foreach (var role in roles)
+        {
+            if (!await roleManager.RoleExistsAsync(role))
+            {
+                await roleManager.CreateAsync(new IdentityRole(role));
+            }
+        }
+
+        var adminUser = await userManager.FindByEmailAsync("admin@cine.com");
+        if (adminUser != null && !await userManager.IsInRoleAsync(adminUser, "Administrador"))
+        {
+            await userManager.AddToRoleAsync(adminUser, "Administrador");
+        }
+    }
+    catch (Exception ex)
+    {
+        Console.Error.WriteLine("Error al inicializar datos y migraciones:");
+        Console.Error.WriteLine(ex);
+        throw;
+    }
+}
+
 if (!app.Environment.IsDevelopment())
 {
     app.UseExceptionHandler("/Home/Error");
     app.UseHsts();
+}
+else
+{
+    app.UseSwagger();
+    app.UseSwaggerUI();
 }
 
 app.UseHttpsRedirection();
@@ -48,9 +100,9 @@ app.UseRouting();
 app.UseAuthentication();
 app.UseAuthorization();
 
+app.MapControllers();
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");
-app.MapRazorPages(); // Necesario para las vistas de Identity (Login/Registro)
 
 app.Run();

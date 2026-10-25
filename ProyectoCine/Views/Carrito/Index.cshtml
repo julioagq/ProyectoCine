@@ -1,0 +1,98 @@
+﻿@model ProyectoCine.Models.CarritoViewModel
+
+@{
+    ViewData["Title"] = "Carrito de Compras";
+}
+
+<div class="container-fluid">
+    <h2 class="mb-4">🛒 Carrito de Compras</h2>
+
+    @if (TempData["MensajeExito"] != null)
+    {
+        <div class="alert alert-success">
+            @TempData["MensajeExito"]
+        </div>
+    }
+
+    @if (TempData["ErrorCarrito"] != null)
+    {
+        <div class="alert alert-danger">
+            @TempData["ErrorCarrito"]
+        </div>
+    }
+
+    @if (Model.Items != null && Model.Items.Any())
+    {
+        <div class="card bg-dark text-white p-4 shadow">
+            <table class="table table-dark table-striped align-middle">
+                <thead>
+                    <tr>
+                        <th>Película</th>
+                        <th>Butaca</th>
+                        <th>Precio U.</th>
+                        <th>Cantidad</th>
+                        <th>Subtotal</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model.Items)
+                    {
+                        <tr>
+                            <td>@item.TituloPelicula</td>
+                            <td>@(string.IsNullOrWhiteSpace(item.ButacaCodigo) ? "N/A" : item.ButacaCodigo)</td>
+                            <td>$@item.Precio.ToString("0.00")</td>
+                            <td>
+                                @if (string.IsNullOrWhiteSpace(item.ButacaCodigo))
+                                {
+                                    <form asp-action="ActualizarCantidad" method="post" class="d-inline">
+                                        @Html.AntiForgeryToken()
+                                        <input type="hidden" name="id" value="@item.Id" />
+                                        <input type="number" name="cantidad" value="@item.Cantidad" min="1" class="form-control form-control-sm d-inline-block w-50" />
+                                        <button type="submit" class="btn btn-warning btn-sm fw-bold">Actualizar</button>
+                                    </form>
+                                }
+                                else
+                                {
+                                    <span class="badge bg-secondary">1</span>
+                                }
+                            </td>
+                            <td>$@item.SubTotal.ToString("0.00")</td>
+                            <td>
+                                <form asp-action="Eliminar" method="post" class="d-inline">
+                                    @Html.AntiForgeryToken()
+                                    <input type="hidden" name="id" value="@item.Id" />
+                                    <button type="submit" class="btn btn-danger btn-sm">Eliminar</button>
+                                </form>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+
+            <div class="d-flex justify-content-between align-items-center mt-3 border-top pt-3">
+                <h3 class="text-success m-0">Total General: $@Model.Items.Sum(i => i.SubTotal).ToString("0.00")</h3>
+
+                <!-- Botón para ir al Checkout / Proceder al pago -->
+                <form asp-controller="Checkout" asp-action="Index" method="get" class="m-0">
+                    <button type="submit" class="btn btn-success fw-bold px-4 py-2 shadow-sm">
+                        💳 Proceder al Pago
+                    </button>
+                </form>
+            </div>
+        </div>
+    }
+    else
+    {
+        <!-- Estado cuando el carrito está vacío -->
+        <div class="card bg-light text-center p-5 shadow-sm border-0">
+            <div class="card-body">
+                <p class="fs-5 text-muted mb-4">Tu carrito está vacío.</p>
+                <!-- 👉 AQUÍ ESTÁ EL CAMBIO: Apunta a Peliculas / Index para ver la cartelera -->
+                <a asp-controller="Peliculas" asp-action="Index" class="btn btn-warning fw-bold px-4 py-2">
+                    Ver Cartelera
+                </a>
+            </div>
+        </div>
+    }
+</div>

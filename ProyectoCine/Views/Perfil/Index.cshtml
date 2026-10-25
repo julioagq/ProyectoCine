@@ -1,0 +1,215 @@
+@model ProyectoCine.Models.PerfilViewModel
+
+@{
+    ViewData["Title"] = "Mi perfil";
+    var usuarioEsCorreo = string.Equals(Model.Usuario.UserName, Model.Usuario.Email, StringComparison.OrdinalIgnoreCase);
+}
+
+<div class="container-fluid">
+    <h2 class="mb-4">👤 Perfil y reservas</h2>
+
+    @if (TempData["MensajePerfil"] != null)
+    {
+        <div class="alert alert-success" role="alert">@TempData["MensajePerfil"]</div>
+    }
+
+    @if (TempData["ErrorPerfil"] != null)
+    {
+        <div class="alert alert-danger" role="alert">@TempData["ErrorPerfil"]</div>
+    }
+
+    <div class="row g-4">
+        <div class="col-lg-4">
+            <div class="card shadow-sm border-0">
+                <div class="card-header bg-dark text-white fw-bold">Datos del usuario</div>
+                <div class="card-body">
+                    <p class="mb-2"><strong>Correo:</strong> @Model.Usuario.Email</p>
+                    @if (!usuarioEsCorreo)
+                    {
+                        <p class="mb-2"><strong>Usuario:</strong> @Model.Usuario.UserName</p>
+                    }
+                    <p class="mb-2"><strong>ID:</strong> @Model.Usuario.Id</p>
+                    <p class="mb-0"><strong>Correo confirmado:</strong> @(Model.Usuario.EmailConfirmed ? "Sí" : "No")</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-8">
+            <div class="card shadow-sm border-0 mb-4">
+                <div class="card-header bg-primary text-white fw-bold">Reservas pendientes de pago</div>
+                <div class="card-body p-0">
+                    @if (Model.ReservasPendientes.Any())
+                    {
+                        <div class="table-responsive">
+                            <table class="table table-striped mb-0">
+                                <thead>
+                                    <tr>
+                                        <th>Función</th>
+                                        <th>Butaca</th>
+                                        <th>Estado</th>
+                                        <th>Expira</th>
+                                        <th>Hecha por</th>
+                                        @if (Model.EsAdmin)
+                                        {
+                                            <th>Acciones</th>
+                                        }
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var reserva in Model.ReservasPendientes)
+                                    {
+                                        var usuarioReserva = Model.UsuariosPorId.TryGetValue(reserva.UserId, out var nombre) ? nombre : reserva.UserId;
+                                        var collapseIdPendiente = $"confirmarEliminarPendiente{reserva.Id}";
+                                        <tr>
+                                            <td>#@reserva.FuncionId</td>
+                                            <td>@reserva.ButacaCodigo</td>
+                                            <td>@reserva.Estado</td>
+                                            <td>@reserva.ExpiraEn.ToLocalTime().ToString("dd/MM/yyyy HH:mm")</td>
+                                            <td>@usuarioReserva</td>
+                                            @if (Model.EsAdmin)
+                                            {
+                                                <td>
+                                                    <button class="btn btn-sm btn-outline-danger fw-bold" type="button" data-bs-toggle="collapse" data-bs-target="#@collapseIdPendiente" aria-expanded="false" aria-controls="@collapseIdPendiente">
+                                                        Eliminar
+                                                    </button>
+                                                </td>
+                                            }
+                                        </tr>
+                                        @if (Model.EsAdmin)
+                                        {
+                                            <tr>
+                                                <td colspan="6" class="bg-light-subtle">
+                                                    <div class="collapse" id="@collapseIdPendiente">
+                                                        <div class="p-3">
+                                                            <div class="small text-muted mb-2">
+                                                                Confirma la eliminación de la reserva <strong>@reserva.ButacaCodigo</strong> de la función <strong>#@reserva.FuncionId</strong>, creada por <strong>@usuarioReserva</strong>.
+                                                            </div>
+                                                            <form asp-controller="Perfil" asp-action="EliminarReserva" method="post" class="d-flex gap-2">
+                                                                @Html.AntiForgeryToken()
+                                                                <input type="hidden" name="id" value="@reserva.Id" />
+                                                                <button type="submit" class="btn btn-sm btn-danger">Confirmar eliminación</button>
+                                                            </form>
+                                                        </div>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        }
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="p-3 text-muted">No hay reservas pendientes.</div>
+                    }
+                </div>
+            </div>
+
+            @if (Model.EsAdmin)
+            {
+                <div class="card shadow-sm border-0">
+                    <div class="card-header bg-success text-white fw-bold">Reservas pagadas</div>
+                    <div class="card-body p-0">
+                        @if (Model.ReservasPagadas.Any())
+                        {
+                            <div class="table-responsive">
+                                <table class="table table-hover mb-0">
+                                    <thead>
+                                        <tr>
+                                            <th>Función</th>
+                                            <th>Butaca</th>
+                                            <th>Estado</th>
+                                            <th>Hecha por</th>
+                                            <th>Acciones</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @foreach (var reserva in Model.ReservasPagadas)
+                                        {
+                                            var usuarioReserva = Model.UsuariosPorId.TryGetValue(reserva.UserId, out var nombre) ? nombre : reserva.UserId;
+                                            var collapseIdPagada = $"confirmarEliminarPagada{reserva.Id}";
+                                            <tr>
+                                                <td>#@reserva.FuncionId</td>
+                                                <td>@reserva.ButacaCodigo</td>
+                                                <td>@reserva.Estado</td>
+                                                <td>@usuarioReserva</td>
+                                                <td>
+                                                    <button class="btn btn-sm btn-outline-danger fw-bold" type="button" data-bs-toggle="collapse" data-bs-target="#@collapseIdPagada" aria-expanded="false" aria-controls="@collapseIdPagada">
+                                                        Eliminar
+                                                    </button>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td colspan="5" class="bg-light-subtle">
+                                                    <div class="collapse" id="@collapseIdPagada">
+                                                        <div class="p-3">
+                                                            <div class="small text-muted mb-2">
+                                                                Confirma la eliminación de la reserva pagada <strong>@reserva.ButacaCodigo</strong> de la función <strong>#@reserva.FuncionId</strong>, creada por <strong>@usuarioReserva</strong>.
+                                                            </div>
+                                                            <form asp-controller="Perfil" asp-action="EliminarReserva" method="post" class="d-flex gap-2">
+                                                                @Html.AntiForgeryToken()
+                                                                <input type="hidden" name="id" value="@reserva.Id" />
+                                                                <button type="submit" class="btn btn-sm btn-danger">Confirmar eliminación</button>
+                                                            </form>
+                                                        </div>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        }
+                                    </tbody>
+                                </table>
+                            </div>
+                        }
+                        else
+                        {
+                            <div class="p-3 text-muted">No hay reservas pagadas.</div>
+                        }
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+
+    <div class="card shadow-sm border-0 mt-4">
+        <div class="card-header bg-secondary text-white fw-bold">Historial de compras</div>
+        <div class="card-body p-0">
+            @if (Model.Ordenes.Any())
+            {
+                <div class="table-responsive">
+                    <table class="table table-hover mb-0">
+                        <thead>
+                            <tr>
+                                <th>Orden</th>
+                                <th>Fecha</th>
+                                <th>Transacción</th>
+                                <th>Total</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var orden in Model.Ordenes)
+                            {
+                                <tr>
+                                    <td>#@orden.Id</td>
+                                    <td>@orden.FechaOrden.ToString("dd/MM/yyyy HH:mm")</td>
+                                    <td>@orden.TransaccionId</td>
+                                    <td>₡@orden.TotalGeneral.ToString("N2")</td>
+                                    <td>
+                                        <a asp-controller="Perfil" asp-action="DetalleCompra" asp-route-id="@orden.Id" class="btn btn-sm btn-primary fw-bold text-white">
+                                            Ver detalles
+                                        </a>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            }
+            else
+            {
+                <div class="p-3 text-muted">No hay compras registradas.</div>
+            }
+        </div>
+    </div>
+</div>

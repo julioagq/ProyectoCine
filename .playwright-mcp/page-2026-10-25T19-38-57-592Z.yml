@@ -1,0 +1,244 @@
+- generic [active] [ref=e1]:
+  - complementary [ref=e2]:
+    - link "🎬 Cine UH" [ref=e3] [cursor=pointer]:
+      - /url: /
+    - navigation [ref=e4]:
+      - generic [ref=e5]: Principal
+      - link "🏠 Inicio" [ref=e6] [cursor=pointer]:
+        - /url: /
+      - link "🎞️ Películas" [ref=e7] [cursor=pointer]:
+        - /url: /Peliculas
+      - link "🛒 Carrito de Compras" [ref=e8] [cursor=pointer]:
+        - /url: /Carrito
+      - link "🕒 Funciones" [ref=e9] [cursor=pointer]:
+        - /url: /Funciones
+      - link "🏢 Cines" [ref=e10] [cursor=pointer]:
+        - /url: /Cines
+      - link "🪑 Salas" [ref=e11] [cursor=pointer]:
+        - /url: /Salas
+      - generic [ref=e12]: Cuenta
+      - link "👤 Mi perfil y reservas" [ref=e13] [cursor=pointer]:
+        - /url: /Perfil
+      - generic [ref=e14]: Información
+      - link "🔒 Políticas y privacidad" [ref=e15] [cursor=pointer]:
+        - /url: /Home/Privacy
+  - generic [ref=e16]:
+    - banner [ref=e17]:
+      - generic [ref=e18]: Detalles de la Función
+      - generic [ref=e20]:
+        - generic [ref=e21]:
+          - text: Bienvenido,
+          - strong [ref=e22]: comprador.ui.test@cine.com
+        - button "Cerrar sesión" [ref=e24] [cursor=pointer]
+    - main [ref=e26]:
+      - generic [ref=e30]:
+        - heading "Detalles de la Función" [level=4] [ref=e32]
+        - generic [ref=e33]:
+          - generic [ref=e34]:
+            - term [ref=e35]: Película
+            - definition [ref=e36]: Harry Potter y la piedra filosofal
+            - term [ref=e37]: Sala y Cine
+            - definition [ref=e38]: Sala 1 (Multiplaza)
+            - term [ref=e39]: Fecha y Hora
+            - definition [ref=e40]: 26/10/2026 01:10 p. m.
+            - term [ref=e41]: Precio
+            - definition [ref=e42]: ₡3 000,00
+          - generic [ref=e43]:
+            - heading "Seleccionar Butacas" [level=5] [ref=e44]
+            - paragraph [ref=e45]: Indica cuántas butacas quieres y selecciona solo esa cantidad.
+            - generic [ref=e46]:
+              - generic [ref=e47]:
+                - generic [ref=e48]: Cantidad de butacas
+                - combobox [ref=e49]:
+                  - option "1" [selected]
+                  - option "2"
+                  - option "3"
+                  - option "4"
+                  - option "5"
+                  - option "6"
+                  - option "7"
+                  - option "8"
+                  - option "9"
+                  - option "10"
+              - generic [ref=e50]:
+                - generic [ref=e52]: Libre
+                - generic [ref=e54]: Seleccionada
+                - generic [ref=e56]: Reservada por mí
+                - generic [ref=e58]: Reservada por otro
+            - generic [ref=e59]: PANTALLA
+            - generic [ref=e60]:
+              - generic [ref=e61]:
+                - generic [ref=e62]: A
+                - button "1" [disabled]
+                - button "2" [ref=e63] [cursor=pointer]
+                - button "3" [ref=e64] [cursor=pointer]
+                - button "4" [ref=e65] [cursor=pointer]
+                - button "5" [ref=e66] [cursor=pointer]
+                - button "6" [ref=e67] [cursor=pointer]
+                - button "7" [ref=e68] [cursor=pointer]
+                - button "8" [ref=e69] [cursor=pointer]
+                - button "9" [ref=e70] [cursor=pointer]
+                - button "10" [ref=e71] [cursor=pointer]
+              - generic [ref=e72]:
+                - generic [ref=e73]: B
+                - button "1" [ref=e74] [cursor=pointer]
+                - button "2" [ref=e75] [cursor=pointer]
+                - button "3" [ref=e76] [cursor=pointer]
+                - button "4" [ref=e77] [cursor=pointer]
+                - button "5" [ref=e78] [cursor=pointer]
+                - button "6" [ref=e79] [cursor=pointer]
+                - button "7" [ref=e80] [cursor=pointer]
+                - button "8" [ref=e81] [cursor=pointer]
+                - button "9" [ref=e82] [cursor=pointer]
+                - button "10" [ref=e83] [cursor=pointer]
+              - generic [ref=e84]:
+                - generic [ref=e85]: C
+                - button "1" [ref=e86] [cursor=pointer]
+                - button "2" [ref=e87] [cursor=pointer]
+                - button "3" [ref=e88] [cursor=pointer]
+                - button "4" [ref=e89] [cursor=pointer]
+                - button "5" [ref=e90] [cursor=pointer]
+                - button "6" [ref=e91] [cursor=pointer]
+                - button "7" [ref=e92] [cursor=pointer]
+                - button "8" [ref=e93] [cursor=pointer]
+                - button "9" [ref=e94] [cursor=pointer]
+                - button "10" [ref=e95] [cursor=pointer]
+              - generic [ref=e96]:
+                - generic [ref=e97]: D
+                - button "1" [ref=e98] [cursor=pointer]
+                - button "2" [ref=e99] [cursor=pointer]
+                - button "3" [ref=e100] [cursor=pointer]
+                - button "4" [ref=e101] [cursor=pointer]
+                - button "5" [ref=e102] [cursor=pointer]
+                - button "6" [ref=e103] [cursor=pointer]
+                - button "7" [ref=e104] [cursor=pointer]
+                - button "8" [ref=e105] [cursor=pointer]
+                - button "9" [ref=e106] [cursor=pointer]
+                - button "10" [ref=e107] [cursor=pointer]
+              - generic [ref=e108]:
+                - generic [ref=e109]: E
+                - button "1" [ref=e110] [cursor=pointer]
+                - button "2" [ref=e111] [cursor=pointer]
+                - button "3" [ref=e112] [cursor=pointer]
+                - button "4" [ref=e113] [cursor=pointer]
+                - button "5" [ref=e114] [cursor=pointer]
+                - button "6" [ref=e115] [cursor=pointer]
+                - button "7" [ref=e116] [cursor=pointer]
+                - button "8" [ref=e117] [cursor=pointer]
+                - button "9" [ref=e118] [cursor=pointer]
+                - button "10" [ref=e119] [cursor=pointer]
+              - generic [ref=e120]:
+                - generic [ref=e121]: F
+                - button "1" [ref=e122] [cursor=pointer]
+                - button "2" [ref=e123] [cursor=pointer]
+                - button "3" [ref=e124] [cursor=pointer]
+                - button "4" [ref=e125] [cursor=pointer]
+                - button "5" [ref=e126] [cursor=pointer]
+                - button "6" [ref=e127] [cursor=pointer]
+                - button "7" [ref=e128] [cursor=pointer]
+                - button "8" [ref=e129] [cursor=pointer]
+                - button "9" [ref=e130] [cursor=pointer]
+                - button "10" [ref=e131] [cursor=pointer]
+              - generic [ref=e132]:
+                - generic [ref=e133]: G
+                - button "1" [ref=e134] [cursor=pointer]
+                - button "2" [ref=e135] [cursor=pointer]
+                - button "3" [ref=e136] [cursor=pointer]
+                - button "4" [ref=e137] [cursor=pointer]
+                - button "5" [ref=e138] [cursor=pointer]
+                - button "6" [ref=e139] [cursor=pointer]
+                - button "7" [ref=e140] [cursor=pointer]
+                - button "8" [ref=e141] [cursor=pointer]
+                - button "9" [ref=e142] [cursor=pointer]
+                - button "10" [ref=e143] [cursor=pointer]
+              - generic [ref=e144]:
+                - generic [ref=e145]: H
+                - button "1" [ref=e146] [cursor=pointer]
+                - button "2" [ref=e147] [cursor=pointer]
+                - button "3" [ref=e148] [cursor=pointer]
+                - button "4" [ref=e149] [cursor=pointer]
+                - button "5" [ref=e150] [cursor=pointer]
+                - button "6" [ref=e151] [cursor=pointer]
+                - button "7" [ref=e152] [cursor=pointer]
+                - button "8" [ref=e153] [cursor=pointer]
+                - button "9" [ref=e154] [cursor=pointer]
+                - button "10" [ref=e155] [cursor=pointer]
+              - generic [ref=e156]:
+                - generic [ref=e157]: I
+                - button "1" [ref=e158] [cursor=pointer]
+                - button "2" [ref=e159] [cursor=pointer]
+                - button "3" [ref=e160] [cursor=pointer]
+                - button "4" [ref=e161] [cursor=pointer]
+                - button "5" [ref=e162] [cursor=pointer]
+                - button "6" [ref=e163] [cursor=pointer]
+                - button "7" [ref=e164] [cursor=pointer]
+                - button "8" [ref=e165] [cursor=pointer]
+                - button "9" [ref=e166] [cursor=pointer]
+                - button "10" [ref=e167] [cursor=pointer]
+              - generic [ref=e168]:
+                - generic [ref=e169]: J
+                - button "1" [ref=e170] [cursor=pointer]
+                - button "2" [ref=e171] [cursor=pointer]
+                - button "3" [ref=e172] [cursor=pointer]
+                - button "4" [ref=e173] [cursor=pointer]
+                - button "5" [ref=e174] [cursor=pointer]
+                - button "6" [ref=e175] [cursor=pointer]
+                - button "7" [ref=e176] [cursor=pointer]
+                - button "8" [ref=e177] [cursor=pointer]
+                - button "9" [ref=e178] [cursor=pointer]
+                - button "10" [ref=e179] [cursor=pointer]
+              - generic [ref=e180]:
+                - generic [ref=e181]: K
+                - button "1" [ref=e182] [cursor=pointer]
+                - button "2" [ref=e183] [cursor=pointer]
+                - button "3" [ref=e184] [cursor=pointer]
+                - button "4" [ref=e185] [cursor=pointer]
+                - button "5" [ref=e186] [cursor=pointer]
+                - button "6" [ref=e187] [cursor=pointer]
+                - button "7" [ref=e188] [cursor=pointer]
+                - button "8" [ref=e189] [cursor=pointer]
+                - button "9" [ref=e190] [cursor=pointer]
+                - button "10" [ref=e191] [cursor=pointer]
+              - generic [ref=e192]:
+                - generic [ref=e193]: L
+                - button "1" [ref=e194] [cursor=pointer]
+                - button "2" [ref=e195] [cursor=pointer]
+                - button "3" [ref=e196] [cursor=pointer]
+                - button "4" [ref=e197] [cursor=pointer]
+                - button "5" [ref=e198] [cursor=pointer]
+                - button "6" [ref=e199] [cursor=pointer]
+                - button "7" [ref=e200] [cursor=pointer]
+                - button "8" [ref=e201] [cursor=pointer]
+                - button "9" [ref=e202] [cursor=pointer]
+                - button "10" [ref=e203] [cursor=pointer]
+              - generic [ref=e204]:
+                - generic [ref=e205]: M
+                - button "1" [ref=e206] [cursor=pointer]
+                - button "2" [ref=e207] [cursor=pointer]
+                - button "3" [ref=e208] [cursor=pointer]
+            - generic [ref=e209]:
+              - generic [ref=e210]:
+                - generic [ref=e211]: Butacas seleccionadas
+                - generic [ref=e212]: Ninguna
+              - generic [ref=e213]:
+                - generic [ref=e214]: Cantidad para compra
+                - textbox [ref=e215]: 0 / 1
+              - generic [ref=e217]:
+                - generic [ref=e218]:
+                  - generic [ref=e219]: Precio por butaca
+                  - strong [ref=e220]: ₡3 000,00
+                - generic [ref=e221]:
+                  - generic [ref=e222]: Total estimado
+                  - strong [ref=e223]: ₡NaN
+              - generic [ref=e224]:
+                - button "Agregar butacas al carrito" [disabled]
+            - generic [ref=e225]:
+              - strong [ref=e226]: "Tus butacas reservadas:"
+              - generic [ref=e228]: A1
+          - link "Volver" [ref=e230] [cursor=pointer]:
+            - /url: /Funciones
+    - contentinfo [ref=e231]:
+      - generic [ref=e232]:
+        - text: © 2026 - Cine UH |
+        - link "Políticas y privacidad" [ref=e233] [cursor=pointer]:
+          - /url: /Home/Privacy

@@ -1,0 +1,59 @@
+- generic [active] [ref=e1]:
+  - complementary [ref=e2]:
+    - link "🎬 Cine UH" [ref=e3] [cursor=pointer]:
+      - /url: /
+    - navigation [ref=e4]:
+      - generic [ref=e5]: Principal
+      - link "🏠 Inicio" [ref=e6] [cursor=pointer]:
+        - /url: /
+      - link "🎞️ Películas" [ref=e7] [cursor=pointer]:
+        - /url: /Peliculas
+      - link "🛒 Carrito de Compras" [ref=e8] [cursor=pointer]:
+        - /url: /Carrito
+      - link "🕒 Funciones" [ref=e9] [cursor=pointer]:
+        - /url: /Funciones
+      - link "🏢 Cines" [ref=e10] [cursor=pointer]:
+        - /url: /Cines
+      - link "🪑 Salas" [ref=e11] [cursor=pointer]:
+        - /url: /Salas
+      - generic [ref=e12]: Cuenta
+      - link "👤 Mi perfil y reservas" [ref=e13] [cursor=pointer]:
+        - /url: /Perfil
+      - generic [ref=e14]: Información
+      - link "🔒 Políticas y privacidad" [ref=e15] [cursor=pointer]:
+        - /url: /Home/Privacy
+  - generic [ref=e16]:
+    - banner [ref=e17]:
+      - generic [ref=e18]: Mi perfil
+      - generic [ref=e20]:
+        - generic [ref=e21]:
+          - text: Bienvenido,
+          - strong [ref=e22]: comprador.ui.test@cine.com
+        - button "Cerrar sesión" [ref=e24] [cursor=pointer]
+    - main [ref=e26]:
+      - generic [ref=e27]:
+        - heading "👤 Mi perfil" [level=2] [ref=e28]
+        - generic [ref=e29]:
+          - generic [ref=e31]:
+            - generic [ref=e32]: Datos del usuario
+            - generic [ref=e33]:
+              - paragraph [ref=e34]:
+                - strong [ref=e35]: "Correo:"
+                - text: comprador.ui.test@cine.com
+              - paragraph [ref=e36]:
+                - strong [ref=e37]: "Usuario:"
+                - text: comprador.ui.test@cine.com
+              - paragraph [ref=e38]:
+                - strong [ref=e39]: "Correo confirmado:"
+                - text: Sí
+          - generic [ref=e41]:
+            - generic [ref=e42]: Reservas de butacas
+            - generic [ref=e44]: No tienes reservas activas.
+        - generic [ref=e45]:
+          - generic [ref=e46]: Historial de compras
+          - generic [ref=e48]: Aún no tienes compras realizadas.
+    - contentinfo [ref=e49]:
+      - generic [ref=e50]:
+        - text: © 2026 - Cine UH |
+        - link "Políticas y privacidad" [ref=e51] [cursor=pointer]:
+          - /url: /Home/Privacy

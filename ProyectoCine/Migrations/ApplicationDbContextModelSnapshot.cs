@@ -17,7 +17,7 @@ namespace ProyectoCine.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "10.0.12")
+                .HasAnnotation("ProductVersion", "10.0.14")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
@@ -224,6 +224,42 @@ namespace ProyectoCine.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
+            modelBuilder.Entity("ProyectoCine.Models.CarritoItem", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("ButacaCodigo")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("Cantidad")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("FuncionId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("PeliculaId")
+                        .HasColumnType("int");
+
+                    b.Property<decimal>("Precio")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<string>("TituloPelicula")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("CarritoItems");
+                });
+
             modelBuilder.Entity("ProyectoCine.Models.Cine", b =>
                 {
                     b.Property<int>("Id")
@@ -256,6 +292,40 @@ namespace ProyectoCine.Migrations
                     b.ToTable("Cines");
                 });
 
+            modelBuilder.Entity("ProyectoCine.Models.DetalleOrden", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("Cantidad")
+                        .HasColumnType("int");
+
+                    b.Property<int>("OrdenId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("PeliculaId")
+                        .HasColumnType("int");
+
+                    b.Property<decimal>("PrecioUnitario")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<decimal>("SubTotal")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<string>("TituloPelicula")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("OrdenId");
+
+                    b.ToTable("DetalleOrdenes");
+                });
+
             modelBuilder.Entity("ProyectoCine.Models.Funcion", b =>
                 {
                     b.Property<int>("Id")
@@ -283,6 +353,33 @@ namespace ProyectoCine.Migrations
                     b.HasIndex("SalaId");
 
                     b.ToTable("Funciones");
+                });
+
+            modelBuilder.Entity("ProyectoCine.Models.Orden", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("FechaOrden")
+                        .HasColumnType("datetime2");
+
+                    b.Property<decimal>("TotalGeneral")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<string>("TransaccionId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Ordenes");
                 });
 
             modelBuilder.Entity("ProyectoCine.Models.Pelicula", b =>
@@ -327,6 +424,45 @@ namespace ProyectoCine.Migrations
                     b.HasIndex("CineId");
 
                     b.ToTable("Peliculas");
+                });
+
+            modelBuilder.Entity("ProyectoCine.Models.ReservaButaca", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("ButacaCodigo")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("nvarchar(20)");
+
+                    b.Property<DateTime>("CreadaEn")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Estado")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("nvarchar(20)");
+
+                    b.Property<DateTime>("ExpiraEn")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("FuncionId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("FuncionId", "ButacaCodigo")
+                        .IsUnique();
+
+                    b.ToTable("ReservasButacas");
                 });
 
             modelBuilder.Entity("ProyectoCine.Models.Sala", b =>
@@ -406,6 +542,17 @@ namespace ProyectoCine.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("ProyectoCine.Models.DetalleOrden", b =>
+                {
+                    b.HasOne("ProyectoCine.Models.Orden", "Orden")
+                        .WithMany("Detalles")
+                        .HasForeignKey("OrdenId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Orden");
+                });
+
             modelBuilder.Entity("ProyectoCine.Models.Funcion", b =>
                 {
                     b.HasOne("ProyectoCine.Models.Pelicula", "Pelicula")
@@ -445,6 +592,11 @@ namespace ProyectoCine.Migrations
                         .IsRequired();
 
                     b.Navigation("Cine");
+                });
+
+            modelBuilder.Entity("ProyectoCine.Models.Orden", b =>
+                {
+                    b.Navigation("Detalles");
                 });
 #pragma warning restore 612, 618
         }

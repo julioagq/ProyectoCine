@@ -1,7 +1,12 @@
+@using System.Globalization
+@using ProyectoCine.Services
 @model ProyectoCine.Models.Funcion // El modelo que se recibe es una Función
 @{
     ViewData["Title"] = "Detalles de la Función"; // Título de la página
     var esAdmin = User?.Identity?.IsAuthenticated == true && (User.Identity.Name == "admin@cine.com" || User.IsInRole("Administrador") || User.IsInRole("Admin"));
+    var capacidadSala = Model.Sala?.Capacidad ?? 0;
+    var columnasPorFilaVista = ButacaHelper.ObtenerColumnasPorCapacidad(capacidadSala);
+    var anchoDetallePx = Math.Clamp(560 + (columnasPorFilaVista * 48), 680, 1400);
 }
 
 <style>
@@ -21,45 +26,307 @@
         text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.9);
         font-weight: bold;
     }
+
+    .funcion-details-col {
+        width: 100%;
+    }
+
+    .seat-map-wrapper {
+        overflow-x: auto;
+        display: flex;
+        justify-content: center;
+    }
+
+    .seat-map {
+        display: grid;
+        gap: 10px;
+        width: max-content;
+        margin: 0 auto;
+    }
+
+    .seat-row {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        flex-wrap: nowrap;
+        width: max-content;
+    }
+
+    .seat-row-label {
+        min-width: 32px;
+        font-weight: 700;
+        color: #ffc107;
+    }
+
+    .seat-btn {
+        min-width: 46px;
+        border: 1px solid #6c757d;
+        background-color: #1f2937;
+        color: #f8f9fa;
+    }
+
+    .seat-btn:hover {
+        border-color: #ffc107;
+        color: #ffc107;
+    }
+
+    .seat-btn.selected {
+        background-color: #198754;
+        border-color: #198754;
+        color: #fff;
+    }
+
+    .seat-btn.occupied {
+        background-color: #dc3545;
+        border-color: #dc3545;
+        color: #fff;
+        cursor: not-allowed;
+    }
+
+    .seat-btn.mine {
+        background-color: #0d6efd;
+        border-color: #0d6efd;
+        color: #fff;
+        cursor: not-allowed;
+    }
+
+    .invoice-box {
+        border: 1px solid #4b5563;
+        border-radius: 10px;
+        padding: 14px;
+        background-color: rgba(17, 24, 39, 0.7);
+    }
 </style>
 
 <script>
     document.body.classList.add('funciones-details-page');
+
+    document.addEventListener('DOMContentLoaded', function () {
+        const seatButtons = Array.from(document.querySelectorAll('.seat-btn.available'));
+        const butacasInput = document.getElementById('butacasSeleccionadasInput');
+        const butacasTexto = document.getElementById('butacasSeleccionadasTexto');
+        const btnAgregar = document.getElementById('btnAgregarCarrito');
+        const cantidadDeseadaInput = document.getElementById('cantidadDeseada');
+        const cantidadResumen = document.getElementById('cantidadResumen');
+        const totalResumen = document.getElementById('totalResumen');
+        const precioUnitario = Number(document.getElementById('precioUnitario')?.value || '0');
+
+        const seleccionadas = new Set();
+
+        function obtenerLimite() {
+            const valor = Number(cantidadDeseadaInput?.value || '1');
+            return Number.isFinite(valor) && valor > 0 ? valor : 1;
+        }
+
+        function refrescarResumen() {
+            const lista = Array.from(seleccionadas).sort();
+            const limite = obtenerLimite();
+
+            if (butacasInput) butacasInput.value = lista.join(',');
+            if (butacasTexto) butacasTexto.textContent = lista.length ? lista.join(', ') : 'Ninguna';
+            if (cantidadResumen) cantidadResumen.value = `${lista.length} / ${limite}`;
+            if (totalResumen) totalResumen.textContent = `₡${(lista.length * precioUnitario).toFixed(2)}`;
+            if (btnAgregar) btnAgregar.disabled = lista.length === 0;
+        }
+
+        if (cantidadDeseadaInput) {
+            cantidadDeseadaInput.addEventListener('change', function () {
+                const limite = obtenerLimite();
+                while (seleccionadas.size > limite) {
+                    const ultima = Array.from(seleccionadas).pop();
+                    if (!ultima) break;
+                    seleccionadas.delete(ultima);
+
+                    const btn = seatButtons.find(b => b.getAttribute('data-seat') === ultima);
+                    if (btn) btn.classList.remove('selected');
+                }
+
+                refrescarResumen();
+            });
+        }
+
+        seatButtons.forEach(btn => {
+            btn.addEventListener('click', function () {
+                const codigo = btn.getAttribute('data-seat') || '';
+                if (!codigo) return;
+
+                if (seleccionadas.has(codigo)) {
+                    seleccionadas.delete(codigo);
+                    btn.classList.remove('selected');
+                    refrescarResumen();
+                    return;
+                }
+
+                const limite = obtenerLimite();
+                if (seleccionadas.size >= limite) {
+                    return;
+                }
+
+                seleccionadas.add(codigo);
+                btn.classList.add('selected');
+                refrescarResumen();
+            });
+        });
+
+        refrescarResumen();
+    });
 </script>
 
 <div class="container mt-4 text-white">
     <div class="row justify-content-center">
-        <div class="col-md-6">
+        <div class="col-12 funcion-details-col" style="max-width:@($"{anchoDetallePx}px")">
             <div class="card shadow-sm mt-3 bg-dark text-white border-secondary">
                 <!-- Encabezado visual -->
                 <div class="card-header bg-info text-white">
                     <h4 class="mb-0 fw-bold">Detalles de la Función</h4>
                 </div>
                 <div class="card-body bg-dark text-white">
+                    @if (TempData["ErrorCarrito"] != null)
+                    {
+                        <div class="alert alert-danger" role="alert">@TempData["ErrorCarrito"]</div>
+                    }
+
                     <!-- Lista de detalles de la función -->
                     <dl class="row mb-0">
                         <dt class="col-sm-4 text-warning fw-bold">Película</dt>
-                        <!-- Se muestra el título de la película -->
                         <dd class="col-sm-8 fw-bold fs-5 text-white">@Model.Pelicula?.Titulo</dd>
 
                         <dt class="col-sm-4 text-warning fw-bold mt-3">Sala y Cine</dt>
-                        <!-- Se muestra el nombre de la sala y el cine -->
                         <dd class="col-sm-8 text-white mt-3">@Model.Sala?.Nombre (@Model.Sala?.Cine?.Nombre)</dd>
 
                         <dt class="col-sm-4 text-warning fw-bold mt-3">Fecha y Hora</dt>
-                        <!-- Se muestra la fecha y hora con formato día/mes/año y hora AM/PM -->
                         <dd class="col-sm-8 text-white mt-3">@Model.FechaHora.ToString("dd/MM/yyyy hh:mm tt")</dd>
 
                         <dt class="col-sm-4 text-warning fw-bold mt-3">Precio</dt>
-                        <!-- Precio en colones con dos decimales -->
                         <dd class="col-sm-8 text-success fw-bold fs-5 mt-3">₡@Model.Precio.ToString("N2")</dd>
                     </dl>
 
-                    <!-- Botones de acción -->
+                    @if (User?.Identity?.IsAuthenticated == true && !esAdmin)
+                    {
+                        var butacasPropias = ViewBag.ButacasReservadasPropias as List<string> ?? new List<string>();
+                        var butacasOtros = ViewBag.ButacasReservadasOtros as List<string> ?? new List<string>();
+                        var propiasSet = new HashSet<string>(butacasPropias, StringComparer.OrdinalIgnoreCase);
+                        var otrosSet = new HashSet<string>(butacasOtros, StringComparer.OrdinalIgnoreCase);
+                        var capacidad = capacidadSala;
+                        var columnasPorFila = columnasPorFilaVista;
+                        var totalFilas = (int)Math.Ceiling(capacidad / (decimal)columnasPorFila);
+
+                        <div class="mt-4 pt-3 border-top border-secondary">
+                            <h5 class="text-warning">Seleccionar Butacas</h5>
+                            <p class="mb-2 text-light">Indica cuántas butacas quieres y selecciona solo esa cantidad.</p>
+
+                            <div class="row g-3 align-items-end mb-3">
+                                <div class="col-md-4">
+                                    <label class="form-label">Cantidad de butacas</label>
+                                    <select id="cantidadDeseada" name="cantidadDeseada" class="form-select" form="formAgregarButacas">
+                                        @for (var i = 1; i <= Math.Min(10, capacidad); i++)
+                                        {
+                                            <option value="@i">@i</option>
+                                        }
+                                    </select>
+                                </div>
+                                <div class="col-md-8 d-flex flex-wrap gap-3 align-items-center small">
+                                    <span><span class="badge bg-secondary">Libre</span></span>
+                                    <span><span class="badge bg-success">Seleccionada</span></span>
+                                    <span><span class="badge bg-primary">Reservada por mí</span></span>
+                                    <span><span class="badge bg-danger">Reservada por otro</span></span>
+                                </div>
+                            </div>
+
+                            <div class="mb-3 p-2 border border-secondary rounded text-center fw-bold text-info">PANTALLA</div>
+
+                            <div class="seat-map-wrapper mb-3">
+                                <div class="seat-map">
+                                    @for (var fila = 1; fila <= totalFilas; fila++)
+                                    {
+                                        var etiquetaFila = ConvertirNumeroAFila(fila);
+                                        <div class="seat-row">
+                                            <span class="seat-row-label">@etiquetaFila</span>
+                                            @for (var columna = 1; columna <= columnasPorFila; columna++)
+                                            {
+                                                var numeroAsiento = ((fila - 1) * columnasPorFila) + columna;
+                                                if (numeroAsiento > capacidad)
+                                                {
+                                                    break;
+                                                }
+
+                                                var codigoButaca = $"{etiquetaFila}{columna}";
+                                                var esMia = propiasSet.Contains(codigoButaca);
+                                                var ocupadaOtro = !esMia && otrosSet.Contains(codigoButaca);
+                                                var claseEstado = esMia ? "mine" : (ocupadaOtro ? "occupied" : "available");
+                                                var deshabilitada = esMia || ocupadaOtro;
+
+                                                <button type="button"
+                                                        class="btn btn-sm seat-btn @claseEstado"
+                                                        data-seat="@codigoButaca"
+                                                        disabled="@deshabilitada"
+                                                        title="@codigoButaca">
+                                                    @columna
+                                                </button>
+                                            }
+                                        </div>
+                                    }
+                                </div>
+                            </div>
+
+                            <form id="formAgregarButacas" asp-controller="Carrito" asp-action="AgregarMultiple" method="post" class="row g-2">
+                                @Html.AntiForgeryToken()
+                                <input type="hidden" name="funcionId" value="@Model.Id" />
+                                <input type="hidden" id="butacasSeleccionadasInput" name="butacasSeleccionadas" />
+                                <input type="hidden" id="precioUnitario" value="@Model.Precio.ToString(CultureInfo.InvariantCulture)" />
+
+                                <div class="col-md-7">
+                                    <label class="form-label">Butacas seleccionadas</label>
+                                    <div class="form-control bg-secondary-subtle text-dark" id="butacasSeleccionadasTexto">Ninguna</div>
+                                </div>
+                                <div class="col-md-5">
+                                    <label class="form-label">Cantidad para compra</label>
+                                    <input type="text" class="form-control" id="cantidadResumen" value="0 / 1" readonly />
+                                </div>
+
+                                <div class="col-12">
+                                    <div class="invoice-box">
+                                        <div class="d-flex justify-content-between"><span>Precio por butaca</span><strong>₡@Model.Precio.ToString("N2")</strong></div>
+                                        <div class="d-flex justify-content-between mt-1"><span>Total estimado</span><strong id="totalResumen">₡0.00</strong></div>
+                                    </div>
+                                </div>
+
+                                <div class="col-12">
+                                    <button type="submit" id="btnAgregarCarrito" class="btn btn-success fw-bold w-100" disabled>Agregar butacas al carrito</button>
+                                </div>
+                            </form>
+
+                            @if (butacasPropias.Any() || butacasOtros.Any())
+                            {
+                                <div class="mt-3">
+                                    @if (butacasPropias.Any())
+                                    {
+                                        <strong>Tus butacas reservadas:</strong>
+                                        <div class="mt-2 d-flex flex-wrap gap-2">
+                                            @foreach (var butaca in butacasPropias.OrderBy(x => x))
+                                            {
+                                                <span class="badge bg-primary">@butaca</span>
+                                            }
+                                        </div>
+                                    }
+
+                                    @if (butacasOtros.Any())
+                                    {
+                                        <strong class="mt-3 d-block">Butacas reservadas por otros usuarios:</strong>
+                                        <div class="mt-2 d-flex flex-wrap gap-2">
+                                            @foreach (var butaca in butacasOtros.OrderBy(x => x))
+                                            {
+                                                <span class="badge bg-danger">@butaca</span>
+                                            }
+                                        </div>
+                                    }
+                                </div>
+                            }
+                        </div>
+                    }
+
                     <div class="d-flex justify-content-between mt-4 pt-3 border-top border-secondary">
-                        <!-- Botón para volver al listado -->
                         <a asp-action="Index" class="btn btn-outline-light">Volver</a>
-                        <!-- Botón para editar la función (Visible solo si es admin) -->
                         @if (esAdmin)
                         {
                             <a asp-action="Edit" asp-route-id="@Model?.Id" class="btn btn-warning fw-bold text-dark">Editar</a>
@@ -70,3 +337,18 @@
         </div>
     </div>
 </div>
+
+@functions {
+    private static string ConvertirNumeroAFila(int numero)
+    {
+        var resultado = string.Empty;
+        while (numero > 0)
+        {
+            numero--;
+            resultado = (char)('A' + (numero % 26)) + resultado;
+            numero /= 26;
+        }
+
+        return resultado;
+    }
+}

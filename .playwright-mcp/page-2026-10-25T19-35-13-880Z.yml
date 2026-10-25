@@ -1,0 +1,62 @@
+- generic [active] [ref=e1]:
+  - complementary [ref=e2]:
+    - link "🎬 Cine UH" [ref=e3] [cursor=pointer]:
+      - /url: /
+    - navigation [ref=e4]:
+      - generic [ref=e5]: Principal
+      - link "🏠 Inicio" [ref=e6] [cursor=pointer]:
+        - /url: /
+      - link "🎞️ Películas" [ref=e7] [cursor=pointer]:
+        - /url: /Peliculas
+      - link "🕒 Funciones" [ref=e8] [cursor=pointer]:
+        - /url: /Funciones
+      - link "🏢 Cines" [ref=e9] [cursor=pointer]:
+        - /url: /Cines
+      - link "🪑 Salas" [ref=e10] [cursor=pointer]:
+        - /url: /Salas
+      - generic [ref=e11]: Cuenta
+      - link "🔑 Ingresar" [ref=e12] [cursor=pointer]:
+        - /url: /Home/Login
+      - link "📝 Registro" [ref=e13] [cursor=pointer]:
+        - /url: /Home/Register
+      - generic [ref=e14]: Información
+      - link "🔒 Políticas y privacidad" [ref=e15] [cursor=pointer]:
+        - /url: /Home/Privacy
+  - generic [ref=e16]:
+    - banner [ref=e17]:
+      - generic [ref=e18]: Registro de Usuario
+      - generic [ref=e20]:
+        - link "Ingresar" [ref=e21] [cursor=pointer]:
+          - /url: /Home/Login
+        - link "Registro" [ref=e22] [cursor=pointer]:
+          - /url: /Home/Register
+    - main [ref=e24]:
+      - generic [ref=e27]:
+        - heading "Registro de Usuario" [level=2] [ref=e28]
+        - generic [ref=e29]:
+          - generic [ref=e30]:
+            - generic [ref=e31]: Nombre completo
+            - textbox "Nombre completo" [ref=e32]:
+              - /placeholder: Tu nombre
+          - generic [ref=e33]:
+            - generic [ref=e34]: Email
+            - textbox "Email" [ref=e35]:
+              - /placeholder: correo@ejemplo.com
+          - generic [ref=e36]:
+            - generic [ref=e37]: Password
+            - textbox "Password" [ref=e38]:
+              - /placeholder: ••••••••
+          - generic [ref=e39]:
+            - generic [ref=e40]: ConfirmPassword
+            - textbox "ConfirmPassword" [ref=e41]:
+              - /placeholder: ••••••••
+          - button "Registrarse" [ref=e46] [cursor=pointer]
+        - generic [ref=e47]:
+          - paragraph [ref=e48]: ¿Ya tienes una cuenta?
+          - link "Inicia sesión aquí" [ref=e49] [cursor=pointer]:
+            - /url: /Home/Login
+    - contentinfo [ref=e50]:
+      - generic [ref=e51]:
+        - text: © 2026 - Cine UH |
+        - link "Políticas y privacidad" [ref=e52] [cursor=pointer]:
+          - /url: /Home/Privacy

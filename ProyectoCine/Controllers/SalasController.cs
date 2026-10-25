@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
@@ -10,6 +11,7 @@ using ProyectoCine.Models;
 
 namespace ProyectoCine.Controllers
 {
+    [Authorize(Roles = "Administrador")]
     public class SalasController : Controller
     {
         private readonly ApplicationDbContext _context;
@@ -20,6 +22,7 @@ namespace ProyectoCine.Controllers
         }
 
         // GET: Salas
+        [AllowAnonymous]
         public async Task<IActionResult> Index()
         {
             var applicationDbContext = _context.Salas.Include(s => s.Cine);
@@ -27,6 +30,7 @@ namespace ProyectoCine.Controllers
         }
 
         // GET: Salas/Details/5
+        [AllowAnonymous]
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null) return NotFound();

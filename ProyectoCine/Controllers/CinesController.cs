@@ -24,8 +24,8 @@ namespace ProyectoCine.Controllers
         private bool EsAdministrador()
         {
             return User?.Identity?.IsAuthenticated == true &&
-                   User.Identity.Name != null &&
-                   User.Identity.Name.Trim().ToLower() == "admin@cine.com";
+                   (User.IsInRole("Administrador") ||
+                    string.Equals(User.Identity?.Name, "admin@cine.com", StringComparison.OrdinalIgnoreCase));
         }
 
         // GET: Cines (Público)
@@ -48,6 +48,7 @@ namespace ProyectoCine.Controllers
         }
 
         // GET: Cines/Create (SOLO ADMIN)
+        [Authorize(Roles = "Administrador")]
         public IActionResult Create()
         {
             if (!EsAdministrador()) return RedirectToAction(nameof(Index));
@@ -57,6 +58,7 @@ namespace ProyectoCine.Controllers
         // POST: Cines/Create (SOLO ADMIN)
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Administrador")]
         public async Task<IActionResult> Create([Bind("Id,Nombre,Ubicacion,NumeroSalas,Latitud,Longitud")] Cine cine)
         {
             if (!EsAdministrador()) return RedirectToAction(nameof(Index));
@@ -71,6 +73,7 @@ namespace ProyectoCine.Controllers
         }
 
         // GET: Cines/Edit/5
+        [Authorize(Roles = "Administrador")]
         public async Task<IActionResult> Edit(int? id)
         {
             if (!EsAdministrador()) return RedirectToAction(nameof(Index));
@@ -86,6 +89,7 @@ namespace ProyectoCine.Controllers
         // POST: Cines/Edit/5 -> ACTUALIZACIÓN BLINDADA Y DIRECTA A LA BASE DE DATOS
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Administrador")]
         public async Task<IActionResult> Edit(int id, [Bind("Id,Nombre,Ubicacion,NumeroSalas,Latitud,Longitud")] Cine cine)
         {
             if (!EsAdministrador())
@@ -138,6 +142,7 @@ namespace ProyectoCine.Controllers
         }
 
         // GET: Cines/Delete/5 (SOLO ADMIN)
+        [Authorize(Roles = "Administrador")]
         public async Task<IActionResult> Delete(int? id)
         {
             if (!EsAdministrador()) return RedirectToAction(nameof(Index));
@@ -153,6 +158,7 @@ namespace ProyectoCine.Controllers
         // POST: Cines/Delete/5 (SOLO ADMIN)
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Administrador")]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             if (!EsAdministrador()) return RedirectToAction(nameof(Index));
